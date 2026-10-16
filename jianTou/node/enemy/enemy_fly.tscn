@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3 uid="uid://bs8m76jisbvmm"]
+
+[ext_resource type="Script" uid="uid://bux6kniu6f1ve" path="res://cs/enemy/EnemyFly.cs" id="1_uri4o"]
+[ext_resource type="Texture2D" uid="uid://dvl4k2q8ey1y7" path="res://ps/enemy/enemy.png" id="2_3lu5o"]
+[ext_resource type="Script" path="res://cs/core/HurtBox.cs" id="3_hurt"]
+[ext_resource type="Script" path="res://cs/core/HitBox.cs" id="4_hit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_byu03"]
+size = Vector2(6, 6)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fyehu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_3lu5o")
+}],
+"loop": true,
+"name": &"move",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_07lsq"]
+size = Vector2(6, 6)
+
+[node name="enemyFly" type="CharacterBody2D" unique_id=1147255065]
+collision_layer = 8
+collision_mask = 3
+script = ExtResource("1_uri4o")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=911685630]
+shape = SubResource("RectangleShape2D_byu03")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1668619206]
+position = Vector2(1.0058284e-07, 0)
+scale = Vector2(0.060000002, 0.06)
+sprite_frames = SubResource("SpriteFrames_fyehu")
+animation = &"move"
+
+[node name="HurtBox" type="Area2D" parent="." unique_id=84866679]
+collision_layer = 128
+collision_mask = 16
+monitoring = false
+script = ExtResource("3_hurt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=2013616335]
+shape = SubResource("RectangleShape2D_07lsq")
+
+[node name="HitBox" type="Area2D" parent="." unique_id=1657107694]
+collision_layer = 32
+collision_mask = 64
+monitorable = false
+script = ExtResource("4_hit")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox" unique_id=1556480925]
+shape = SubResource("RectangleShape2D_07lsq")

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "T4TPFfxmeIQ=",
+  "success": true,
+  "projectFilePath": "e:\\Program Files (x86)\\newGame\\jianTou\\JianTou.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\PC\\.nuget\\packages\\godot.sourcegenerators\\4.6.2\\godot.sourcegenerators.4.6.2.nupkg.sha512",
+    "C:\\Users\\PC\\.nuget\\packages\\godotsharp\\4.6.2\\godotsharp.4.6.2.nupkg.sha512",
+    "C:\\Users\\PC\\.nuget\\packages\\godotsharpeditor\\4.6.2\\godotsharpeditor.4.6.2.nupkg.sha512",
+    "C:\\Users\\PC\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.26\\microsoft.netcore.app.ref.8.0.26.nupkg.sha512",
+    "C:\\Users\\PC\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.26\\microsoft.windowsdesktop.app.ref.8.0.26.nupkg.sha512",
+    "C:\\Users\\PC\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.26\\microsoft.aspnetcore.app.ref.8.0.26.nupkg.sha512"
+  ],
+  "logs": []
+}
