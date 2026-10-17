@@ -70,8 +70,13 @@ public partial class Player : CharacterBody2D, IDamageable
 
 	[ExportGroup("死亡与重生")]
 
-	/// <summary>纵坐标低于这个值算摔死（掉出地图）。</summary>
-	[Export] public float FallDeathY = 400f;
+	/// <summary>
+	/// 纵坐标超过这个值算摔死（掉出可玩区域）。
+	/// 当前关卡：主地面 y=240，坑在 x=512~536，下方地下层地板 y=416~448（最底边 448）。
+	/// 地下层是要玩的区域，所以死亡线放在整张地图外（470）——正常游玩不会再触发，
+	/// 只作为"以后在地图上挖了洞"的兜底。
+	/// </summary>
+	[Export] public float FallDeathY = 470f;
 
 	/// <summary>死亡后到重开的等待时间。</summary>
 	[Export] public float RespawnDelay = 0.6f;
@@ -91,7 +96,11 @@ public partial class Player : CharacterBody2D, IDamageable
 	public bool IsAlive => Health > 0;
 	public bool IsInvincible => _invincibleTimer > 0f;
 
+	/// <summary>已收集的金币数。只存在内存里，重开关卡会归零。</summary>
+	public int Coins { get; private set; }
+
 	[Signal] public delegate void HealthChangedEventHandler(int health, int maxHealth);
+	[Signal] public delegate void CoinChangedEventHandler(int coins);
 	[Signal] public delegate void DiedEventHandler();
 
 	private static readonly StringName AnimIdle = "idle";
@@ -290,6 +299,19 @@ public partial class Player : CharacterBody2D, IDamageable
 
 		Health = Mathf.Min(MaxHealth, Health + amount);
 		EmitSignal(SignalName.HealthChanged, Health, MaxHealth);
+	}
+
+	/// <summary>加金币（由 Coin 碰到玩家时调用）。</summary>
+	public void AddCoin(int amount)
+	{
+		if (amount <= 0)
+		{
+			return;
+		}
+
+		Coins += amount;
+		EmitSignal(SignalName.CoinChanged, Coins);
+		GD.Print($"[Player] 金币 +{amount}，当前 {Coins}");
 	}
 
 	private void Die()

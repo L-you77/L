@@ -24,3 +24,18 @@
 ## 环境
 - dotnet 10.0.203 可用；`dotnet build` 能离线还原并编译，可用来做编译验证。
 - Godot 编辑器本体不在命令行环境里，改场景后只能用脚本校验 .tscn 结构（脚本见当日日志思路）。
+
+## 关卡坐标速查（2026-10-17 版，改地形后要重新核对）
+- Tile 8px；主地面 y=240，`FallDeathY=470`（地下层已开放，死亡线挪到地图外 448 之下）。
+- 整关是封闭盒子：顶 y=64、地下层地板 y=416~448、左右墙各 3 格。
+- 主地面唯一缺口 = 坑 x=512~536（24px 宽），也是进出地下层的**唯一**通道；地下净空 256~416。
+- 玩家出生点 (551, 229)，在坑右侧。
+- 移动平台运行时位置由 RemoteTransform2D 对齐到 PathFollow2D（不是场景里那个 -19.58 偏移），
+  三个平台顶面大致在 y≈212→161 / y≈212 / y≈155。
+- 解析 tile_map_data：前 2 字节是头，之后每条 12 字节 `<hhhhhh`=(x,y,source,atlas_x,atlas_y,alt)；
+  **只有 atlas_x==0 的图块带物理多边形**。
+
+## 道具约定
+- 金币计数存在 `Player.Coins`（内存，重开关卡归零），`AddCoin()` + `CoinChanged` 信号。
+- `Coin` 用 `BodyEntered` 检测玩家**本体**（layer 0 / mask 4=PlayerBody / monitorable=false），
+  不参与任何伤害层，无敌帧期间照样能捡。收集后 player.AddCoin → 发 Collected 信号 → 放大淡出 → QueueFree。

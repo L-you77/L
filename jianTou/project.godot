@@ -12,7 +12,7 @@ config_version=5
 
 config/name="JianTou"
 run/main_scene="res://node/node_1.tscn"
-config/features=PackedStringArray("4.6", "Mobile")
+config/features=PackedStringArray("4.6", "C#", "Mobile")
 
 [dotnet]
 
