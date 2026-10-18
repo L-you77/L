@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://c2dsiytkrtgxm"]
+[gd_scene format=3 uid="uid://c2dsiytkrtgxm"]
 
 [ext_resource type="Script" uid="uid://3tnbxtwdru28" path="res://cs/ui/PauseMenu.cs" id="1_pause"]
 [ext_resource type="Texture2D" uid="uid://b8p1cjfs2m7gx" path="res://ps/ui/zanTing.png" id="2_zt"]
@@ -13,7 +13,8 @@
 [ext_resource type="Script" uid="uid://bvw3sxac2me7u" path="res://cs/ui/DeathPanel.cs" id="12_death"]
 [ext_resource type="Texture2D" uid="uid://cdbksimp5qvl8" path="res://ps/player/warn.png" id="13_warn"]
 [ext_resource type="Texture2D" uid="uid://pr3n47s6le0x" path="res://ps/ui/chongLai.png" id="14_cl"]
-[ext_resource type="Texture2D" path="res://ps/ui/tuiChu.png" id="15_tc"]
+[ext_resource type="Texture2D" uid="uid://h1rpvgx2wmac" path="res://ps/coin/coin.png" id="15_24msh"]
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="15_tc"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_etsle"]
 animations = [{
@@ -63,7 +64,7 @@ mouse_filter = 2
 script = ExtResource("11_hp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="HealthIcon" unique_id=1158694042]
-position = Vector2(81.00001, 23.000002)
+position = Vector2(119, 30)
 scale = Vector2(0.4350003, 0.42)
 sprite_frames = SubResource("SpriteFrames_etsle")
 animation = &"idle"
@@ -71,14 +72,14 @@ animation = &"idle"
 [node name="Warn" type="Sprite2D" parent="HealthIcon" unique_id=1837421691]
 visible = false
 position = Vector2(81.25, 23.000002)
-scale = Vector2(0.43499994, 0.42000002)
+scale = Vector2(0.35499993, 0.35999998)
 texture = ExtResource("13_warn")
 
 [node name="HealthLabel" type="Label" parent="HealthIcon" unique_id=1837421692]
-offset_left = 112.0
-offset_top = -4.0
-offset_right = 240.0
-offset_bottom = 50.0
+layout_mode = 0
+offset_left = 152.0
+offset_right = 280.0
+offset_bottom = 61.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
@@ -88,8 +89,10 @@ vertical_alignment = 1
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1837421650]
 layout_mode = 1
-offset_right = 48.0
-offset_bottom = 48.0
+offset_left = 33.0
+offset_top = 7.0
+offset_right = 81.0
+offset_bottom = 55.0
 texture_normal = ExtResource("2_zt")
 ignore_texture_size = true
 stretch_mode = 5
@@ -217,3 +220,8 @@ grow_vertical = 2
 texture_normal = ExtResource("14_cl")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="Coin" type="Sprite2D" parent="." unique_id=1982665673]
+position = Vector2(312, 27)
+scale = Vector2(0.4999997, 0.5)
+texture = ExtResource("15_24msh")

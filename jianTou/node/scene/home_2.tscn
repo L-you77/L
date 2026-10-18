@@ -1,0 +1,158 @@
+[gd_scene format=3 uid="uid://c5tou4accg727"]
+
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="1_p8yet"]
+[ext_resource type="Texture2D" uid="uid://kjosoyj18wkn" path="res://ps/scene/jiaoXue.png" id="2_nkru7"]
+[ext_resource type="Texture2D" uid="uid://dthk1tttvygal" path="res://ps/scene/1.png" id="3_f4nla"]
+[ext_resource type="Texture2D" uid="uid://eep6xrqlijdo" path="res://ps/player/JiaZai/JiaZai100.png" id="4_wk4h4"]
+[ext_resource type="Texture2D" uid="uid://cb2ariysfqsc4" path="res://ps/player/JiaZai/1.png" id="5_mkujn"]
+[ext_resource type="Texture2D" uid="uid://dbubxg2tij4ly" path="res://ps/player/JiaZai/2.png" id="6_ln2pk"]
+[ext_resource type="Texture2D" uid="uid://bljbsojnx3os2" path="res://ps/player/JiaZai/3.png" id="7_ct1t7"]
+[ext_resource type="Texture2D" uid="uid://b8085hcvluop3" path="res://ps/player/JiaZai/4.png" id="8_jre1y"]
+[ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="9_7raok"]
+[ext_resource type="Texture2D" uid="uid://df12o3xy5ax1" path="res://ps/scene/wuXian.png" id="10_f4nla"]
+[ext_resource type="Texture2D" uid="uid://bh04x3dnry4fo" path="res://ps/scene/qiDai.png" id="11_wk4h4"]
+[ext_resource type="Script" path="res://cs/ui/Home2Menu.cs" id="12_home2"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_logo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_wk4h4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_mkujn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ln2pk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_ct1t7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_jre1y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_7raok")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="Home2" type="Control" unique_id=2010000001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("12_home2")
+
+[node name="Background" type="ColorRect" parent="." unique_id=2010000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.89788103, 0.89846134, 0.9236047, 1)
+
+[node name="Divider" type="ColorRect" parent="." unique_id=2010000005]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 36.0
+offset_right = 100.0
+offset_bottom = 38.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.35)
+
+[node name="ExitButton" type="TextureButton" parent="." unique_id=2010000008]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 194.0
+offset_right = 536.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("1_p8yet")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="jiaoXue" type="TextureButton" parent="." unique_id=807876167]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -238.0
+offset_top = -150.0
+offset_right = -82.13623
+offset_bottom = -40.43512
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.15145795
+focus_mode = 0
+texture_normal = ExtResource("2_nkru7")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="zhuXian" type="TextureButton" parent="." unique_id=1414387285]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -245.0
+offset_top = -10.0
+offset_right = -42.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("3_f4nla")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Logo" type="AnimatedSprite2D" parent="zhuXian" unique_id=2010000003]
+position = Vector2(127, 69)
+rotation = 0.28858516
+scale = Vector2(1.0699999, 1.0799999)
+sprite_frames = SubResource("SpriteFrames_logo")
+animation = &"idle"
+
+[node name="ExitButton2" type="TextureButton" parent="." unique_id=1532559208]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 56.0
+offset_top = -155.0
+offset_right = 120.0
+offset_bottom = -93.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("10_f4nla")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="QiDai" type="Sprite2D" parent="." unique_id=352727806]
+position = Vector2(706, 464)
+scale = Vector2(0.18399996, 0.28773594)
+texture = ExtResource("11_wk4h4")

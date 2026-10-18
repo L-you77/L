@@ -1,0 +1,182 @@
+[gd_scene format=3 uid="uid://dwn0t6b5v3l1c"]
+
+[ext_resource type="Script" uid="uid://dx6ibnbul0bcy" path="res://cs/ui/HomeMenu.cs" id="1_home"]
+[ext_resource type="Texture2D" uid="uid://eep6xrqlijdo" path="res://ps/player/JiaZai/JiaZai100.png" id="2_logo0"]
+[ext_resource type="Texture2D" uid="uid://cb2ariysfqsc4" path="res://ps/player/JiaZai/1.png" id="3_logo1"]
+[ext_resource type="Texture2D" uid="uid://dbubxg2tij4ly" path="res://ps/player/JiaZai/2.png" id="4_logo2"]
+[ext_resource type="Texture2D" uid="uid://bljbsojnx3os2" path="res://ps/player/JiaZai/3.png" id="5_logo3"]
+[ext_resource type="Texture2D" uid="uid://b8085hcvluop3" path="res://ps/player/JiaZai/4.png" id="6_logo4"]
+[ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="7_logo5"]
+[ext_resource type="Texture2D" uid="uid://dxbm3ym5nplxw" path="res://ps/ui/jiXu.png" id="8_start"]
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="9_exit"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_logo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_logo0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_logo1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_logo2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_logo3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_logo4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_logo5")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="Home" type="Control" unique_id=2010000001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_home")
+GameScenePath = "res://node/scene/home_2.tscn"
+
+[node name="Background" type="ColorRect" parent="." unique_id=2010000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.174885, 0.17489481, 0.21279415, 1)
+
+[node name="Logo" type="AnimatedSprite2D" parent="." unique_id=2010000003]
+position = Vector2(576, 136)
+scale = Vector2(1.28, 1.28)
+sprite_frames = SubResource("SpriteFrames_logo")
+animation = &"idle"
+
+[node name="Title" type="Label" parent="." unique_id=2010000004]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -114.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 110
+text = "加载中..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Divider" type="ColorRect" parent="." unique_id=2010000005]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 36.0
+offset_right = 100.0
+offset_bottom = 38.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.35)
+
+[node name="Subtitle" type="Label" parent="." unique_id=2010000006]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 54.0
+offset_bottom = 86.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.72, 1)
+theme_override_font_sizes/font_size = 26
+text = "don't stand still"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="TextureButton" parent="." unique_id=2010000007]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -108.0
+offset_top = 124.0
+offset_right = -12.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("8_start")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ExitButton" type="TextureButton" parent="." unique_id=2010000008]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 12.0
+offset_top = 124.0
+offset_right = 108.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("9_exit")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="StartLabel" type="Label" parent="." unique_id=2010000009]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -108.0
+offset_top = 228.0
+offset_right = -12.0
+offset_bottom = 258.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.87, 1)
+theme_override_font_sizes/font_size = 22
+text = "START"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExitLabel" type="Label" parent="." unique_id=2010000010]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 12.0
+offset_top = 228.0
+offset_right = 108.0
+offset_bottom = 258.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.87, 1)
+theme_override_font_sizes/font_size = 22
+text = "EXIT"
+horizontal_alignment = 1
+vertical_alignment = 1

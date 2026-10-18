@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://c71psx5u2cwad"]
+
+[ext_resource type="Script" uid="uid://oc6jyjar8nhw" path="res://cs/organ/TongGuan.cs" id="1_enu2j"]
+[ext_resource type="Texture2D" uid="uid://cc7vj4b50pbcb" path="res://ps/tileMap/tongGuan.png" id="2_25o3o"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4x3ip"]
+size = Vector2(10, 14)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_k3b60"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_25o3o")
+}],
+"loop": true,
+"name": &"tongGuan",
+"speed": 5.0
+}]
+
+[node name="tongGuan" type="Area2D" unique_id=527467700]
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+script = ExtResource("1_enu2j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=227755879]
+shape = SubResource("RectangleShape2D_4x3ip")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1933973689]
+position = Vector2(2.9802322e-08, -5.9604645e-08)
+scale = Vector2(0.036, 0.031999998)
+sprite_frames = SubResource("SpriteFrames_k3b60")
+animation = &"tongGuan"

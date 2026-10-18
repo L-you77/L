@@ -56,9 +56,15 @@ public partial class DeathPanel : Control
 		GetTree().ReloadCurrentScene();
 	}
 
-	/// <summary>退出：直接关掉游戏。</summary>
+	/// <summary>退出：回到主页。</summary>
 	private void OnExitPressed()
 	{
-		GetTree().Quit();
+		GetTree().Paused = false;
+
+		Error error = GetTree().ChangeSceneToFile(ScenePaths.Home);
+		if (error != Error.Ok)
+		{
+			GD.PushError($"[DeathPanel] 回主页失败：{error}（{ScenePaths.Home}）");
+		}
 	}
 }

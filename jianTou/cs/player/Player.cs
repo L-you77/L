@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 /// <summary>
@@ -6,8 +7,10 @@ using Godot;
 /// 玩法：横版跳跃平台，没有冲刺。
 ///   贴图：按当前速度的 X / Y 方向切 8 张箭头图（含 4 个斜向），静止时播 idle 动画（JiaZai 序列帧）。
 ///   手感：加速度/摩擦、土狼时间（Coyote Time）、跳跃缓冲（Jump Buffer）、松键小跳。
-///   战斗：血量 + 受击无敌帧与闪烁 + 击退；从上方踩到敌人会反弹并把敌人消灭。
-///   死亡：掉出地图或血量归零，默认整关重开。
+///   战斗：血量 + 受击无敌帧与闪烁 + 击退；从上方踩到敌人会反弹并消灭它；
+///         J 近战（NearHit，冷却 3 秒）、U 远程（FarHit，冷却 5 秒）。
+///   梯子：站进 tiZi 区域后不吃重力，按 上/下 攀爬。
+///   死亡：掉出地图或血量归零，等 UI 的重来按钮。
 /// </summary>
 public partial class Player : CharacterBody2D, IDamageable
 {
@@ -68,6 +71,59 @@ public partial class Player : CharacterBody2D, IDamageable
 	/// <summary>受击击退（X 为水平速度，Y 为向上的速度，注意是负数）。</summary>
 	[Export] public Vector2 DamageKnockback = new Vector2(90f, -140f);
 
+	[ExportGroup("近战攻击")]
+
+	/// <summary>近战冷却（秒）。</summary>
+	[Export] public float NearHitCooldown = 3f;
+
+	/// <summary>近战判定窗口（秒），只要这一小段时间里碰到敌人就算打中。</summary>
+	[Export] public float NearHitDuration = 0.3f;
+
+	/// <summary>近战伤害。</summary>
+	[Export] public int NearHitDamage = 1;
+
+	/// <summary>近战判定盒相对角色中心往前挪的距离（像素）。</summary>
+	[Export] public float NearHitReach = 5f;
+
+	[ExportGroup("远程攻击")]
+
+	/// <summary>远程冷却（秒）。</summary>
+	[Export] public float FarHitCooldown = 5f;
+
+	/// <summary>弹体飞行速度（像素/秒）。</summary>
+	[Export] public float FarHitSpeed = 60f;
+
+	/// <summary>弹体伤害。</summary>
+	[Export] public int FarHitDamage = 1;
+
+	/// <summary>弹体场景路径。</summary>
+	[Export] public string FarHitScenePath = "res://node/organ/far_hit.tscn";
+
+	[ExportGroup("强化")]
+
+	/// <summary>
+	/// 开局是否已经拥有近战/远程武器。
+	/// 教学关卡用 player2.tscn 把它关掉，玩家必须先点自己三选一、拿到武器才能攻击。
+	/// </summary>
+	[Export] public bool UnlockAttacksAtStart = true;
+
+	/// <summary>每次"加速"强化给的速度提升比例（0.15 = +15%）。左右各自独立累计。</summary>
+	[Export] public float SpeedUpPerLevel = 0.15f;
+
+	/// <summary>每次"跳跃"强化给的高度提升比例（0.12 = +12%）。</summary>
+	[Export] public float JumpUpPerLevel = 0.12f;
+
+	/// <summary>每次"攻速"强化让攻击间隔缩短的比例（0.15 = -15%）。</summary>
+	[Export] public float CooldownDownPerLevel = 0.15f;
+
+	/// <summary>每次"伤害"强化增加的伤害点数。</summary>
+	[Export] public int DamageUpPerLevel = 1;
+
+	[ExportGroup("梯子")]
+
+	/// <summary>爬梯速度（像素/秒）。</summary>
+	[Export] public float LadderClimbSpeed = 40f;
+
 	[ExportGroup("死亡与重生")]
 
 	/// <summary>
@@ -102,14 +158,36 @@ public partial class Player : CharacterBody2D, IDamageable
 	public bool IsAlive => Health > 0;
 	public bool IsInvincible => _invincibleTimer > 0f;
 
+	/// <summary>向右移动速度倍率（"向右加速"强化累加）。</summary>
+	public float RightSpeedMultiplier { get; private set; } = 1f;
+
+	/// <summary>向左移动速度倍率（"向左加速"强化累加）。</summary>
+	public float LeftSpeedMultiplier { get; private set; } = 1f;
+
+	/// <summary>跳跃初速度倍率（"跳得更高"强化累加）。</summary>
+	public float JumpMultiplier { get; private set; } = 1f;
+
+	/// <summary>是否已经拿到近战武器（没有时按 J 无效）。</summary>
+	public bool HasNearHit { get; private set; }
+
+	/// <summary>是否已经拿到远程武器（没有时按 U 无效）。</summary>
+	public bool HasFarHit { get; private set; }
+
 	/// <summary>玩家节点所在的分组，UI 靠它找到玩家（不用在编辑器里连 NodePath）。</summary>
 	public const string GroupName = "player";
 
 	/// <summary>已收集的金币数。只存在内存里，重开关卡会归零。</summary>
 	public int Coins { get; private set; }
 
+	/// <summary>
+	/// 还能"点击自己"弹出几次三选一强化。
+	/// 每个 coinSpe 给 1 次（见 <see cref="AddUpgradeCharge"/>），教学关卡靠它控制强化次数。
+	/// </summary>
+	public int UpgradeCharges { get; private set; }
+
 	[Signal] public delegate void HealthChangedEventHandler(int health, int maxHealth);
 	[Signal] public delegate void CoinChangedEventHandler(int coins);
+	[Signal] public delegate void UpgradeChargeChangedEventHandler(int charges);
 	[Signal] public delegate void DiedEventHandler();
 
 	private static readonly StringName AnimIdle = "idle";
@@ -136,6 +214,24 @@ public partial class Player : CharacterBody2D, IDamageable
 	private bool _jumpNotCut;   // 本次起跳是否还没被“松键”截断
 	private bool _isDead;
 
+	// 战斗
+	private int _facing = 1;        // 1 = 朝右，-1 = 朝左
+	private float _nearHitCd;
+	private float _nearHitWindow;
+	private float _farHitCd;
+	private Node2D _nearHitPivot;
+	private Sprite2D _nearHitSprite;
+	private AnimationPlayer _nearHitAnim;
+	private HitBox _nearHitBox;
+	private CollisionShape2D _nearHitShape;
+	private PackedScene _farHitScene;
+
+	// 梯子
+	private readonly List<TiZi> _ladders = new();
+
+	/// <summary>是否站在梯子上。</summary>
+	public bool IsOnLadder => _ladders.Count > 0;
+
 	public override void _Ready()
 	{
 		_sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
@@ -150,10 +246,15 @@ public partial class Player : CharacterBody2D, IDamageable
 		_spawnPosition = GlobalPosition;
 		_invincibleTimer = 0f;
 
+		HasNearHit = UnlockAttacksAtStart;
+		HasFarHit = UnlockAttacksAtStart;
+
 		if (_stompBox != null)
 		{
 			_stompBox.HitLanded += OnStompLanded;
 		}
+
+		SetUpAttacks();
 
 		EmitSignal(SignalName.HealthChanged, Health, MaxHealth);
 	}
@@ -195,6 +296,19 @@ public partial class Player : CharacterBody2D, IDamageable
 		}
 		UpdateSpriteTint();
 
+		// --- 攻击冷却 / 近战判定窗口 ---
+		_nearHitCd = Mathf.Max(0f, _nearHitCd - dt);
+		_farHitCd = Mathf.Max(0f, _farHitCd - dt);
+		if (_nearHitWindow > 0f)
+		{
+			_nearHitWindow -= dt;
+			if (_nearHitWindow <= 0f)
+			{
+				_nearHitWindow = 0f;
+				EndNearHit();
+			}
+		}
+
 		if (_isDead)
 		{
 			// 死亡后定格当前贴图；倒计时结束后只处理一次（等重来按钮或自动重开）
@@ -211,10 +325,31 @@ public partial class Player : CharacterBody2D, IDamageable
 			return;
 		}
 
+		// --- 攻击输入 ---
+		if (Input.IsActionJustPressed("NearHit"))
+		{
+			TryNearHit();
+		}
+		if (Input.IsActionJustPressed("FarHit"))
+		{
+			TryFarHit();
+		}
+
 		Vector2 velocity = Velocity;
 		bool onFloor = IsOnFloor();
 
 		float inputX = Input.GetAxis("Left", "Right");
+
+		// 朝向：按输入方向立刻翻转，站着不动时保留上一次朝向（攻击要靠它决定往哪打）
+		if (inputX > 0.01f)
+		{
+			_facing = 1;
+		}
+		else if (inputX < -0.01f)
+		{
+			_facing = -1;
+		}
+
 		bool jumpPressed = Input.IsActionJustPressed("Up");
 		bool jumpHeld = Input.IsActionPressed("Up");
 
@@ -222,11 +357,12 @@ public partial class Player : CharacterBody2D, IDamageable
 		_coyoteTimer = onFloor ? CoyoteTime : Mathf.Max(0f, _coyoteTimer - dt);
 		_jumpBufferTimer = jumpPressed ? JumpBufferTime : Mathf.Max(0f, _jumpBufferTimer - dt);
 
-		// --- 水平移动 ---
+		// --- 水平移动（左右速度倍率各自独立，来自"向右/向左加速"强化） ---
 		if (Mathf.Abs(inputX) > 0.01f)
 		{
 			float accel = onFloor ? GroundAcceleration : AirAcceleration;
-			velocity.X = Mathf.MoveToward(velocity.X, inputX * MoveSpeed, accel * dt);
+			float speedMultiplier = inputX > 0f ? RightSpeedMultiplier : LeftSpeedMultiplier;
+			velocity.X = Mathf.MoveToward(velocity.X, inputX * MoveSpeed * speedMultiplier, accel * dt);
 		}
 		else
 		{
@@ -234,16 +370,23 @@ public partial class Player : CharacterBody2D, IDamageable
 			velocity.X = Mathf.MoveToward(velocity.X, 0f, friction * dt);
 		}
 
-		// --- 重力 ---
-		if (!onFloor)
+		// --- 纵向：梯子上不吃重力，按 上/下 攀爬；否则正常重力 ---
+		bool onLadder = IsOnLadder;
+		if (onLadder)
+		{
+			// GetAxis("Up", "Down")：上 = -1，下 = +1；不按键就停在梯子上
+			float climbInput = Input.GetAxis("Up", "Down");
+			velocity.Y = climbInput * LadderClimbSpeed;
+		}
+		else if (!onFloor)
 		{
 			velocity.Y = Mathf.Min(velocity.Y + Gravity * dt, MaxFallSpeed);
 		}
 
-		// --- 起跳 ---
-		if (_jumpBufferTimer > 0f && _coyoteTimer > 0f)
+		// --- 起跳（在梯子上 Up 是往上爬，不触发跳跃） ---
+		if (!onLadder && _jumpBufferTimer > 0f && _coyoteTimer > 0f)
 		{
-			velocity.Y = -JumpForce;
+			velocity.Y = -JumpForce * JumpMultiplier;
 			_jumpNotCut = true;
 			_jumpBufferTimer = 0f;
 			_coyoteTimer = 0f;
@@ -326,6 +469,242 @@ public partial class Player : CharacterBody2D, IDamageable
 		Coins += amount;
 		EmitSignal(SignalName.CoinChanged, Coins);
 		GD.Print($"[Player] 金币 +{amount}，当前 {Coins}");
+	}
+
+	/// <summary>捡到 coinSpe：增加一次强化机会。</summary>
+	public void AddUpgradeCharge(int amount = 1)
+	{
+		if (amount <= 0)
+		{
+			return;
+		}
+
+		UpgradeCharges += amount;
+		EmitSignal(SignalName.UpgradeChargeChanged, UpgradeCharges);
+		GD.Print($"[Player] 强化次数 +{amount}，当前 {UpgradeCharges}");
+	}
+
+	/// <summary>消耗一次强化机会（弹出三选一时调用）。没次数时返回 false。</summary>
+	public bool TryConsumeUpgradeCharge()
+	{
+		if (UpgradeCharges <= 0)
+		{
+			return false;
+		}
+
+		UpgradeCharges--;
+		EmitSignal(SignalName.UpgradeChargeChanged, UpgradeCharges);
+		return true;
+	}
+
+	// ------------------------------------------------------------------
+	// 攻击
+	// ------------------------------------------------------------------
+
+	/// <summary>把战斗用的节点接好（近战贴图/动画、近战判定盒、弹体场景）。</summary>
+	private void SetUpAttacks()
+	{
+		// 近战：NearHitPivot 负责左右镜像（Scale.X = ±1），里面是贴图 + 挥砍动画
+		_nearHitPivot = GetNodeOrNull<Node2D>("NearHitPivot");
+		_nearHitSprite = GetNodeOrNull<Sprite2D>("NearHitPivot/NearHit");
+		_nearHitAnim = GetNodeOrNull<AnimationPlayer>("NearHitPivot/NearHit/AnimationPlayer");
+
+		if (_nearHitSprite != null)
+		{
+			_nearHitSprite.Visible = false;
+		}
+		if (_nearHitAnim != null)
+		{
+			_nearHitAnim.AnimationFinished += OnNearHitAnimationFinished;
+		}
+
+		// 近战判定盒：平时关掉形状，出手那一下才打开
+		_nearHitBox = GetNodeOrNull<HitBox>("NearHitBox");
+		_nearHitShape = GetNodeOrNull<CollisionShape2D>("NearHitBox/CollisionShape2D");
+		if (_nearHitBox != null)
+		{
+			_nearHitBox.Damage = NearHitDamage;
+			_nearHitBox.IsStomp = false;
+		}
+		if (_nearHitShape != null)
+		{
+			_nearHitShape.Disabled = true;
+		}
+
+		// player.tscn 里的 FarHit 贴图只是摆位置用的参考，真正的弹体由 FarHitScenePath 生成
+		if (GetNodeOrNull<Sprite2D>("FarHit") is Sprite2D farHitReference)
+		{
+			farHitReference.Visible = false;
+		}
+	}
+
+	/// <summary>近战攻击（J）。冷却中或还没拿到武器时调用会被忽略。</summary>
+	public void TryNearHit()
+	{
+		if (!IsAlive || !HasNearHit || _nearHitCd > 0f)
+		{
+			return;
+		}
+
+		_nearHitCd = NearHitCooldown;
+		_nearHitWindow = NearHitDuration;
+
+		// 贴图往朝向镜像
+		if (_nearHitPivot != null)
+		{
+			_nearHitPivot.Scale = new Vector2(_facing, 1f);
+		}
+		if (_nearHitSprite != null)
+		{
+			_nearHitSprite.Visible = true;
+		}
+		if (_nearHitAnim != null)
+		{
+			_nearHitAnim.Play("nearHit");
+		}
+
+		// 判定盒挪到身前并打开
+		if (_nearHitBox != null)
+		{
+			_nearHitBox.Position = new Vector2(_facing * NearHitReach, 0f);
+			_nearHitBox.Damage = NearHitDamage;
+		}
+		if (_nearHitShape != null)
+		{
+			_nearHitShape.SetDeferred(CollisionShape2D.PropertyName.Disabled, false);
+		}
+
+		GD.Print("[Player] 近战攻击");
+	}
+
+	/// <summary>近战判定窗口结束：关掉判定盒（贴图等动画播完自己收）。</summary>
+	private void EndNearHit()
+	{
+		if (_nearHitShape != null)
+		{
+			_nearHitShape.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
+		}
+	}
+
+	private void OnNearHitAnimationFinished(StringName animationName)
+	{
+		if (_nearHitSprite != null)
+		{
+			_nearHitSprite.Visible = false;
+		}
+	}
+
+	/// <summary>远程攻击（U）：朝面朝方向打出一发弹体。冷却中或还没拿到武器时调用会被忽略。</summary>
+	public void TryFarHit()
+	{
+		if (!IsAlive || !HasFarHit || _farHitCd > 0f)
+		{
+			return;
+		}
+
+		if (_farHitScene == null)
+		{
+			_farHitScene = ResourceLoader.Load<PackedScene>(FarHitScenePath);
+			if (_farHitScene == null)
+			{
+				GD.PushWarning($"[Player] 远程弹体场景加载失败：{FarHitScenePath}");
+				return;
+			}
+		}
+
+		if (_farHitScene.Instantiate() is not FarHitBullet bullet)
+		{
+			return;
+		}
+
+		Node parent = GetParentOrNull<Node>();
+		if (parent == null)
+		{
+			return;
+		}
+
+		// 这些要在 AddChild（触发 _Ready）之前设好
+		bullet.Direction = _facing;
+		bullet.Speed = FarHitSpeed;
+		bullet.Damage = FarHitDamage;
+
+		// 挂到关卡上，别挂成玩家的子节点，否则弹体会跟着玩家跑
+		parent.AddChild(bullet);
+		bullet.GlobalPosition = GlobalPosition + new Vector2(_facing * 4f, 0f);
+
+		_farHitCd = FarHitCooldown;
+		GD.Print("[Player] 远程攻击");
+	}
+
+	/// <summary>攻击冷却的下限（秒），防止"攻速"强化叠到 0 帧连发。</summary>
+	private const float MinAttackCooldown = 0.2f;
+
+	/// <summary>
+	/// 应用一次强化（由三选一界面调用）。
+	/// </summary>
+	public void ApplyUpgrade(UpgradeEffect effect)
+	{
+		switch (effect)
+		{
+			case UpgradeEffect.SpeedRight:
+				RightSpeedMultiplier += SpeedUpPerLevel;
+				break;
+
+			case UpgradeEffect.SpeedLeft:
+				LeftSpeedMultiplier += SpeedUpPerLevel;
+				break;
+
+			case UpgradeEffect.JumpHeight:
+				JumpMultiplier += JumpUpPerLevel;
+				break;
+
+			case UpgradeEffect.UnlockNearHit:
+				HasNearHit = true;
+				break;
+
+			case UpgradeEffect.NearHitDamage:
+				NearHitDamage += DamageUpPerLevel;
+				break;
+
+			case UpgradeEffect.NearHitSpeed:
+				NearHitCooldown = Mathf.Max(MinAttackCooldown, NearHitCooldown * (1f - CooldownDownPerLevel));
+				break;
+
+			case UpgradeEffect.UnlockFarHit:
+				HasFarHit = true;
+				break;
+
+			case UpgradeEffect.FarHitDamage:
+				FarHitDamage += DamageUpPerLevel;
+				break;
+
+			case UpgradeEffect.FarHitSpeed:
+				FarHitCooldown = Mathf.Max(MinAttackCooldown, FarHitCooldown * (1f - CooldownDownPerLevel));
+				break;
+		}
+
+		GD.Print($"[Player] 强化生效：{effect}");
+	}
+
+	// ------------------------------------------------------------------
+	// 梯子
+	// ------------------------------------------------------------------
+
+	/// <summary>进入梯子区域（由 TiZi 调用）。</summary>
+	public void EnterLadder(TiZi ladder)
+	{
+		if (ladder == null || _ladders.Contains(ladder))
+		{
+			return;
+		}
+
+		_ladders.Add(ladder);
+	}
+
+	/// <summary>离开梯子区域（由 TiZi 调用）。</summary>
+	public void ExitLadder(TiZi ladder)
+	{
+		_ladders.Remove(ladder);
 	}
 
 	private void Die()

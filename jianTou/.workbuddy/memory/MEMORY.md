@@ -25,6 +25,33 @@
 - dotnet 10.0.203 可用；`dotnet build` 能离线还原并编译，可用来做编译验证。
 - Godot 编辑器本体不在命令行环境里，改场景后只能用脚本校验 .tscn 结构（脚本见当日日志思路）。
 
+## 场景结构（2026-10-18 版）
+- 启动场景 = `node/scene/home.tscn`（HomeMenu.cs）→ **home_2**（Home2Menu.cs）→ 教学选关 `home_jiaoxue.tscn`
+  或主线 `node_1.tscn`。教学四关：`node_right`(第一关/向右) / `node_left`(第二关/向左) /
+  `node_up`(第三关/向上) / `node_near_hit`(第四关/近战，真随机)。
+- 场景路径统一走 `cs/core/ScenePaths.cs`，不要在别处硬编码 `res://node/scene/...`。
+- UI = `node/ui/ui.tscn`，在关卡里挂在一个 `CanvasLayer` 下（不能直接挂 Node2D，会跟着相机缩放）。
+- 角色/敌人/道具/机关分别在 `node/{player,enemy,organ}`；脚本在 `cs/{player,enemy,organ,ui,core,scene,upgrade}`。
+- **中文字体**：`ps/font/simhei.ttf`（从系统复制）+ `project.godot` 的 `[gui] theme/custom_font`，
+  所以现在可以放心用中文 Label。新加的字体/贴图需要编辑器扫一次才会导入。
+
+## 强化与教学关卡约定（2026-10-18 版）
+- 强化 = `UpgradeEffect` 枚举 + `UpgradeOption` 卡片；**效果只由 `Player.ApplyUpgrade()` 执行**，
+  UI 不知道具体数值，改强度只改 Player 上的导出字段（SpeedUpPerLevel / JumpUpPerLevel /
+  CooldownDownPerLevel / DamageUpPerLevel）。
+- 左右移速**各算各的**（RightSpeedMultiplier / LeftSpeedMultiplier），不要合并成一个。
+- 武器是解锁制：`HasNearHit` / `HasFarHit` 为 false 时 J/U 直接 return；
+  主线 `player.tscn` 用 `UnlockAttacksAtStart=true` 保持原行为，教学用 `player2.tscn`（继承场景）关掉。
+- 教学关卡根节点挂 `cs/scene/TutorialLevel.cs`，`Mode` 决定抽卡（Random/ForceRight/ForceLeft/ForceUp）。
+  **强化次数由 coinSpe 决定**：`Player.UpgradeCharges`，捡一个点一次（`CoinSpe` → `AddUpgradeCharge`），
+  关卡里放几个 coinSpe 就是几次强化。选完自动放出对应按钮（SpeedRight→TBtnR … UnlockNearHit→TBtnNH）。
+- 触摸按钮属于 UI，不在关卡里：`node/ui/tutorial_ui.tscn`（TBtnL/TBtnR/TBtnNH/TBtnU + 暂停），
+  按钮只绑 `action`（Left/Right/Up/NearHit），逻辑复用 Player。
+  初始可见性由 `TutorialLevel` 的 `ShowRightButton/ShowLeftButton/ShowUpButton/ShowNearHitButton` 控制；
+  **不要**在 `_Ready` 里无条件隐藏所有教学按钮（会误藏 node_left 里本该可见的 TBtnR）。
+- 三选一 UI 是运行时实例化的 `node/ui/upgrade_panel.tscn`（CanvasLayer layer=10，弹出暂停、必选一项）；
+  教学暂停面板在同一 CanvasLayer 里（layer=5），Esc 遇到强化界面开着时会跳过。
+
 ## 关卡坐标速查（2026-10-17 版，改地形后要重新核对）
 - Tile 8px；主地面 y=240，`FallDeathY=470`（地下层已开放，死亡线挪到地图外 448 之下）。
 - 整关是封闭盒子：顶 y=64、地下层地板 y=416~448、左右墙各 3 格。

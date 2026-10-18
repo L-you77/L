@@ -1,0 +1,249 @@
+[gd_scene format=3 uid="uid://kcw7nocj5a8h"]
+
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="1_exit"]
+[ext_resource type="Texture2D" uid="uid://de3oj3kligmqa" path="res://ps/player/move/Right.png" id="2_right"]
+[ext_resource type="Texture2D" uid="uid://bo52qh6eb36ej" path="res://ps/player/move/Left.png" id="3_left"]
+[ext_resource type="Texture2D" uid="uid://b8vnv16epmdhq" path="res://ps/player/move/Up.png" id="4_up"]
+[ext_resource type="Texture2D" uid="uid://b6fodnj04a88t" path="res://ps/player/nearHit.png" id="5_near"]
+[ext_resource type="Script" path="res://cs/ui/HomeJiaoxueMenu.cs" id="6_menu"]
+
+[node name="HomeJiaoxue" type="Control" unique_id=2010000001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_menu")
+
+[node name="Background" type="ColorRect" parent="." unique_id=2010000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.89788103, 0.89846134, 0.9236047, 1)
+
+[node name="Title" type="Label" parent="." unique_id=2010000003]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -222.0
+offset_right = 320.0
+offset_bottom = -162.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 40
+text = "教学关卡"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SubTitle" type="Label" parent="." unique_id=2010000004]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -158.0
+offset_right = 320.0
+offset_bottom = -128.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 18
+text = "选一关开始"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Btn1" type="TextureButton" parent="." unique_id=2010000011]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -252.0
+offset_top = -40.0
+offset_right = -156.0
+offset_bottom = 56.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("2_right")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label1" type="Label" parent="." unique_id=2010000012]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -252.0
+offset_top = 62.0
+offset_right = -156.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "第一关"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Btn2" type="TextureButton" parent="." unique_id=2010000013]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -116.0
+offset_top = -40.0
+offset_right = -20.0
+offset_bottom = 56.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("3_left")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label2" type="Label" parent="." unique_id=2010000014]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -116.0
+offset_top = 62.0
+offset_right = -20.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "第二关"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Btn3" type="TextureButton" parent="." unique_id=2010000015]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = -40.0
+offset_right = 116.0
+offset_bottom = 56.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("4_up")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label3" type="Label" parent="." unique_id=2010000016]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = 62.0
+offset_right = 116.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "第三关"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Btn4" type="TextureButton" parent="." unique_id=2010000017]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 156.0
+offset_top = -40.0
+offset_right = 252.0
+offset_bottom = 56.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("5_near")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label4" type="Label" parent="." unique_id=2010000018]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 156.0
+offset_top = 62.0
+offset_right = 252.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "第四关"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExitButton" type="TextureButton" parent="." unique_id=2010000008]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 194.0
+offset_right = 536.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("1_exit")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ExitLabel" type="Label" parent="." unique_id=2010000009]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 296.0
+offset_right = 536.0
+offset_bottom = 322.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 18
+text = "返回"
+horizontal_alignment = 1
+vertical_alignment = 1

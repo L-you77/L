@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=4]
+
+[ext_resource type="PackedScene" uid="uid://2e250q6slqrg" path="res://node/player/player.tscn" id="1_base"]
+[ext_resource type="Script" path="res://cs/player/Player2.cs" id="2_p2"]
+
+[node name="player2" instance=ExtResource("1_base")]
+script = ExtResource("2_p2")
+UnlockAttacksAtStart = false
+WaitForRestart = false

@@ -21,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://dmy1ri2sp5s8g" path="res://ps/player/Write.png" id="13_write"]
 [ext_resource type="Texture2D" uid="uid://buewd2axtncto" path="res://ps/player/eye.png" id="14_eye"]
 [ext_resource type="Texture2D" uid="uid://cdbksimp5qvl8" path="res://ps/player/warn.png" id="15_warn"]
+[ext_resource type="Texture2D" uid="uid://b6fodnj04a88t" path="res://ps/player/nearHit.png" id="22_dxagx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_knqg0"]
 size = Vector2(6, 6)
@@ -121,6 +122,70 @@ size = Vector2(6, 6)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_704w4"]
 size = Vector2(5, 1)
 
+[sub_resource type="Animation" id="Animation_m6li0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.7120943]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.9999998, -3.0000005)]
+}
+
+[sub_resource type="Animation" id="Animation_d0ktm"]
+resource_name = "nearHit"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [-0.7853982, 0.0, 0.7853982]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(2.9999998, -3.0000005), Vector2(3, -2.3841858e-07), Vector2(3, 3)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_04oiq"]
+_data = {
+&"RESET": SubResource("Animation_m6li0"),
+&"nearHit": SubResource("Animation_d0ktm")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_near"]
+size = Vector2(8, 6)
+
 [node name="player" type="CharacterBody2D" unique_id=1430988901]
 collision_layer = 4
 collision_mask = 3
@@ -179,3 +244,25 @@ visible = false
 position = Vector2(0, -4.7683716e-07)
 scale = Vector2(0.06, 0.059999987)
 texture = ExtResource("15_warn")
+
+[node name="NearHitPivot" type="Node2D" parent="." unique_id=2030000001]
+
+[node name="NearHit" type="Sprite2D" parent="NearHitPivot" unique_id=881431124]
+visible = false
+position = Vector2(2.9999998, -3.0000005)
+rotation = -0.7120943
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("22_dxagx")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="NearHitPivot/NearHit" unique_id=324128189]
+libraries/ = SubResource("AnimationLibrary_04oiq")
+
+[node name="NearHitBox" type="Area2D" parent="." unique_id=2030000002]
+collision_layer = 16
+collision_mask = 128
+monitorable = false
+script = ExtResource("11_hit")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NearHitBox" unique_id=2030000003]
+shape = SubResource("RectangleShape2D_near")
+disabled = true

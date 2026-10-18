@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://de0mmi2etyseq"]
+
+[ext_resource type="Script" uid="uid://c5bqh7bcb02ub" path="res://cs/organ/TiZi.cs" id="1_tizi"]
+[ext_resource type="Texture2D" uid="uid://dvabh8xpb537o" path="res://ps/tileMap/tiZi.png" id="2_tex"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tizi"]
+size = Vector2(8, 8)
+
+[node name="TiZi" type="Area2D" unique_id=2020000001]
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+script = ExtResource("1_tizi")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2020000002]
+scale = Vector2(0.2962963, 0.26666668)
+texture = ExtResource("2_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2020000003]
+shape = SubResource("RectangleShape2D_tizi")
