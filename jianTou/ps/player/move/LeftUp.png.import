@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://725rn0jbim54"
-path="res://.godot/imported/RightDown.png-a17403705a6eabf6c5450ae6e8ad8498.ctex"
+uid="uid://dfrxv57gm7rnx"
+path="res://.godot/imported/LeftUp.png-95824ef1239550cf49756a907aaacfc6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ps/player/RightDown.png"
-dest_files=["res://.godot/imported/RightDown.png-a17403705a6eabf6c5450ae6e8ad8498.ctex"]
+source_file="res://ps/player/move/LeftUp.png"
+dest_files=["res://.godot/imported/LeftUp.png-95824ef1239550cf49756a907aaacfc6.ctex"]
 
 [params]
 

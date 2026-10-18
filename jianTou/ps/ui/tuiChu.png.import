@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctttsc5woey3i"
-path="res://.godot/imported/Down.png-563cf72c4392b4f49b9f37bc657c71be.ctex"
+uid="uid://dt0gs2e7hmyny"
+path="res://.godot/imported/tuiChu.png-78312359d35fccedfbb0285b14a7581c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ps/player/Down.png"
-dest_files=["res://.godot/imported/Down.png-563cf72c4392b4f49b9f37bc657c71be.ctex"]
+source_file="res://ps/ui/tuiChu.png"
+dest_files=["res://.godot/imported/tuiChu.png-78312359d35fccedfbb0285b14a7581c.ctex"]
 
 [params]
 

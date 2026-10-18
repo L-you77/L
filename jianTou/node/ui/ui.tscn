@@ -1,0 +1,219 @@
+[gd_scene load_steps=16 format=3 uid="uid://c2dsiytkrtgxm"]
+
+[ext_resource type="Script" uid="uid://3tnbxtwdru28" path="res://cs/ui/PauseMenu.cs" id="1_pause"]
+[ext_resource type="Texture2D" uid="uid://b8p1cjfs2m7gx" path="res://ps/ui/zanTing.png" id="2_zt"]
+[ext_resource type="Texture2D" uid="uid://dxbm3ym5nplxw" path="res://ps/ui/jiXu.png" id="3_jx"]
+[ext_resource type="Texture2D" uid="uid://eep6xrqlijdo" path="res://ps/player/JiaZai/JiaZai100.png" id="5_kdyfg"]
+[ext_resource type="Texture2D" uid="uid://cb2ariysfqsc4" path="res://ps/player/JiaZai/1.png" id="6_ntnhq"]
+[ext_resource type="Texture2D" uid="uid://dbubxg2tij4ly" path="res://ps/player/JiaZai/2.png" id="7_dn351"]
+[ext_resource type="Texture2D" uid="uid://bljbsojnx3os2" path="res://ps/player/JiaZai/3.png" id="8_cqy31"]
+[ext_resource type="Texture2D" uid="uid://b8085hcvluop3" path="res://ps/player/JiaZai/4.png" id="9_24msh"]
+[ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="10_fewjo"]
+[ext_resource type="Script" uid="uid://d233nccj3u7or" path="res://cs/ui/HealthHud.cs" id="11_hp"]
+[ext_resource type="Script" uid="uid://bvw3sxac2me7u" path="res://cs/ui/DeathPanel.cs" id="12_death"]
+[ext_resource type="Texture2D" uid="uid://cdbksimp5qvl8" path="res://ps/player/warn.png" id="13_warn"]
+[ext_resource type="Texture2D" uid="uid://pr3n47s6le0x" path="res://ps/ui/chongLai.png" id="14_cl"]
+[ext_resource type="Texture2D" path="res://ps/ui/tuiChu.png" id="15_tc"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_etsle"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_kdyfg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ntnhq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_dn351")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_cqy31")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_24msh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_fewjo")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="ui" type="Control" unique_id=1124258303]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_pause")
+
+[node name="HealthIcon" type="Control" parent="." unique_id=1837421690]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("11_hp")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="HealthIcon" unique_id=1158694042]
+position = Vector2(81.00001, 23.000002)
+scale = Vector2(0.4350003, 0.42)
+sprite_frames = SubResource("SpriteFrames_etsle")
+animation = &"idle"
+
+[node name="Warn" type="Sprite2D" parent="HealthIcon" unique_id=1837421691]
+visible = false
+position = Vector2(81.25, 23.000002)
+scale = Vector2(0.43499994, 0.42000002)
+texture = ExtResource("13_warn")
+
+[node name="HealthLabel" type="Label" parent="HealthIcon" unique_id=1837421692]
+offset_left = 112.0
+offset_top = -4.0
+offset_right = 240.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 44
+text = "3"
+vertical_alignment = 1
+
+[node name="PauseButton" type="TextureButton" parent="." unique_id=1837421650]
+layout_mode = 1
+offset_right = 48.0
+offset_bottom = 48.0
+texture_normal = ExtResource("2_zt")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="PausePanel" type="Control" parent="." unique_id=1837421651]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="PausePanel" unique_id=1837421652]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="ExitButton" type="TextureButton" parent="PausePanel" unique_id=1837421693]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -144.0
+offset_top = -40.0
+offset_right = -64.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("15_tc")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RestartButton" type="TextureButton" parent="PausePanel" unique_id=1837421694]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("14_cl")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ResumeButton" type="TextureButton" parent="PausePanel" unique_id=1837421653]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 64.0
+offset_top = -40.0
+offset_right = 144.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("3_jx")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="DeathPanel" type="Control" parent="." unique_id=1837421680]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("12_death")
+
+[node name="Dim" type="ColorRect" parent="DeathPanel" unique_id=1837421681]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+
+[node name="ExitButton" type="TextureButton" parent="DeathPanel" unique_id=1837421695]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -96.0
+offset_top = -40.0
+offset_right = -16.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("15_tc")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RestartButton" type="TextureButton" parent="DeathPanel" unique_id=1837421682]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -40.0
+offset_right = 96.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("14_cl")
+ignore_texture_size = true
+stretch_mode = 5

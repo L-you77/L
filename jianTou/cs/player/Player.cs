@@ -81,8 +81,14 @@ public partial class Player : CharacterBody2D, IDamageable
 	/// <summary>死亡后到重开的等待时间。</summary>
 	[Export] public float RespawnDelay = 0.6f;
 
-	/// <summary>true = 死亡后整关重开；false = 原地满血复活。</summary>
+	/// <summary>true = 死亡后整关重开；false = 原地满血复活（WaitForRestart 关掉时才生效）。</summary>
 	[Export] public bool ReloadSceneOnDeath = true;
+
+	/// <summary>
+	/// 死亡后一直保持死亡状态，等 UI 的重来按钮调用 <see cref="Restart"/>。
+	/// 关掉则回到旧的"等 RespawnDelay 后自动重开/复活"。UI 上有重来按钮时要保持 true，否则会自己重开、按钮来不及点。
+	/// </summary>
+	[Export] public bool WaitForRestart = true;
 
 	[ExportGroup("受击表现")]
 
@@ -95,6 +101,9 @@ public partial class Player : CharacterBody2D, IDamageable
 	public int Health { get; private set; }
 	public bool IsAlive => Health > 0;
 	public bool IsInvincible => _invincibleTimer > 0f;
+
+	/// <summary>玩家节点所在的分组，UI 靠它找到玩家（不用在编辑器里连 NodePath）。</summary>
+	public const string GroupName = "player";
 
 	/// <summary>已收集的金币数。只存在内存里，重开关卡会归零。</summary>
 	public int Coins { get; private set; }
@@ -135,6 +144,7 @@ public partial class Player : CharacterBody2D, IDamageable
 		_stompBox = GetNodeOrNull<HitBox>("HitBox");
 
 		ApplyCollisionLayers();
+		AddToGroup(GroupName);
 
 		Health = MaxHealth;
 		_spawnPosition = GlobalPosition;
@@ -187,12 +197,16 @@ public partial class Player : CharacterBody2D, IDamageable
 
 		if (_isDead)
 		{
-			// 死亡后定格当前贴图，倒计时结束再重开/复活
+			// 死亡后定格当前贴图；倒计时结束后只处理一次（等重来按钮或自动重开）
 			Velocity = Vector2.Zero;
-			_deathTimer -= dt;
-			if (_deathTimer <= 0f)
+			if (_deathTimer > 0f)
 			{
-				FinishDeath();
+				_deathTimer -= dt;
+				if (_deathTimer <= 0f)
+				{
+					_deathTimer = 0f;
+					FinishDeath();
+				}
 			}
 			return;
 		}
@@ -344,19 +358,33 @@ public partial class Player : CharacterBody2D, IDamageable
 		GD.Print("[Player] 死亡");
 	}
 
-	/// <summary>死亡倒计时结束：重开关卡或原地复活。</summary>
+	/// <summary>死亡倒计时结束：等 UI 来点重来，或按设置自动重开/复活。</summary>
 	private void FinishDeath()
 	{
+		if (WaitForRestart)
+		{
+			return; // 保持死亡状态，等 UI 的重来按钮
+		}
+
 		if (!ReloadSceneOnDeath)
 		{
 			Respawn();
 			return;
 		}
 
+		Restart();
+	}
+
+	/// <summary>
+	/// 重开本关（UI 的"重来"按钮调用）。重开失败时兜底原地复活，避免卡在死亡状态。
+	/// </summary>
+	public void Restart()
+	{
+		GetTree().Paused = false;
+
 		Error error = GetTree().ReloadCurrentScene();
 		if (error != Error.Ok)
 		{
-			// 重开失败（比如没设置主场景）时兜底复活，避免卡在死亡状态
 			GD.PushWarning($"[Player] 重开关卡失败（{error}），改为原地复活");
 			Respawn();
 		}
@@ -454,27 +482,24 @@ public partial class Player : CharacterBody2D, IDamageable
 	}
 
 	/// <summary>
-	/// 贴图染色：刚受伤时闪红，之后的无敌时间是半透明闪烁，其余情况恢复白色。
+	/// 整体染色：刚受伤闪红 → 之后的无敌时间半透明闪烁 → 其余恢复白色。
+	/// 染的是玩家**根节点**（Modulate 会向下叠加），这样箭头贴图和 Watcher 里的白块/眼睛会一起变色。
+	/// 只染 AnimatedSprite2D 的话，眼睛出现后白块会把闪红盖住，看起来像"没闪红"。
 	/// </summary>
 	private void UpdateSpriteTint()
 	{
-		if (_sprite == null)
-		{
-			return;
-		}
-
 		if (_hurtFlashTimer > 0f)
 		{
-			_sprite.Modulate = HurtColor;
+			Modulate = HurtColor;
 		}
 		else if (_invincibleTimer > 0f)
 		{
 			float alpha = Mathf.Sin(_invincibleTimer * 40f) > 0f ? 0.3f : 1f;
-			_sprite.Modulate = new Color(1f, 1f, 1f, alpha);
+			Modulate = new Color(1f, 1f, 1f, alpha);
 		}
-		else if (_sprite.Modulate != Colors.White)
+		else if (Modulate != Colors.White)
 		{
-			_sprite.Modulate = Colors.White;
+			Modulate = Colors.White;
 		}
 	}
 }

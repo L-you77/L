@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8snlriqqqy61"
-path="res://.godot/imported/RightUp.png-c92719f03478f26d3b5733810c6b2b60.ctex"
+uid="uid://buewd2axtncto"
+path="res://.godot/imported/eye.png-2c3ecb522b75ae3e4ae8d58100648276.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ps/player/RightUp.png"
-dest_files=["res://.godot/imported/RightUp.png-c92719f03478f26d3b5733810c6b2b60.ctex"]
+source_file="res://ps/player/eye.png"
+dest_files=["res://.godot/imported/eye.png-2c3ecb522b75ae3e4ae8d58100648276.ctex"]
 
 [params]
 

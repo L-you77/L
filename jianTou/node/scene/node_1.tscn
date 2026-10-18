@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://d4i5xbhfv2bj2"]
+[gd_scene format=4 uid="uid://tc1ajt3uyn68"]
 
 [ext_resource type="Texture2D" uid="uid://cc2ko233g04l7" path="res://ps/tileMap/DiMian16.png" id="1_rcvk0"]
 [ext_resource type="PackedScene" uid="uid://bk6cerynqhg60" path="res://node/enemy/enemy.tscn" id="2_fnwbs"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dbg5nciwya1px" path="res://node/organ/moving_platform.tscn" id="4_d2o0o"]
 [ext_resource type="PackedScene" uid="uid://bs8m76jisbvmm" path="res://node/enemy/enemy_fly.tscn" id="5_ey7w8"]
 [ext_resource type="PackedScene" uid="uid://b8w6yhbdo0mwy" path="res://node/organ/coin.tscn" id="6_d2o0o"]
+[ext_resource type="PackedScene" uid="uid://c2dsiytkrtgxm" path="res://node/ui/ui.tscn" id="7_206we"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_m7ebg"]
 texture = ExtResource("1_rcvk0")
@@ -48,7 +49,7 @@ tile_map_data = PackedByteArray("AAD6/wYAAAABAAAAAAD6/wcAAAABAAAAAAD6/wgAAAABAAA
 tile_set = SubResource("TileSet_j1dg6")
 
 [node name="player" parent="." unique_id=1430988901 instance=ExtResource("3_ey7w8")]
-position = Vector2(17, 217)
+position = Vector2(33, 221)
 
 [node name="MovingPlatform" parent="." unique_id=426155349 instance=ExtResource("4_d2o0o")]
 position = Vector2(412, 216)
@@ -85,6 +86,10 @@ position = Vector2(203, 210)
 collision_layer = 1
 collision_mask = 1
 monitorable = true
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1837421665]
+
+[node name="ui" parent="UI" unique_id=1124258303 instance=ExtResource("7_206we")]
 
 [editable path="MovingPlatform"]
 [editable path="MovingPlatform2"]
