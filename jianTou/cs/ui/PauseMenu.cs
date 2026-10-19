@@ -74,14 +74,16 @@ public partial class PauseMenu : Control
 	}
 
 	/// <summary>退出：解除暂停并回到主页。</summary>
+	/// <summary>退出当前关卡：回到当前关卡所属的选关界面（教学关回教学选关，主线回主线选关）。</summary>
 	private void OnExitPressed()
 	{
 		GetTree().Paused = false;
 
-		Error error = GetTree().ChangeSceneToFile(ScenePaths.Home);
+		string target = ScenePaths.CurrentLevelSelect(GetTree());
+		Error error = GetTree().ChangeSceneToFile(target);
 		if (error != Error.Ok)
 		{
-			GD.PushError($"[PauseMenu] 回主页失败：{error}（{ScenePaths.Home}）");
+			GD.PushError($"[PauseMenu] 退出关卡失败：{error}（{target}）");
 		}
 	}
 

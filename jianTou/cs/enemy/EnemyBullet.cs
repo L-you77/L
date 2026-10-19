@@ -9,7 +9,7 @@ using Godot;
 public partial class EnemyBullet : Node2D
 {
 	/// <summary>飞行速度（像素/秒）。</summary>
-	[Export] public float Speed = 40f;
+	[Export] public float Speed = 90f;
 
 	/// <summary>伤害。</summary>
 	[Export] public int Damage = 1;

@@ -39,6 +39,9 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	/// <summary>闪红结束后是否把节点删掉（留开关给以后可能需要留尸体的场合）。</summary>
 	[Export] public bool QueueFreeOnDeath = true;
 
+	/// <summary>打死它给玩家加几枚 coin（0 = 不给）。这些币只有在通关时才会被带出关卡。</summary>
+	[Export] public int CoinReward = 1;
+
 	public int Health { get; private set; }
 	public bool IsAlive => Health > 0;
 
@@ -225,6 +228,12 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 		Velocity = Vector2.Zero; // 死亡后定格，不再移动
 		UpdateSpriteTint();      // 立刻变红，不再等下一帧
 		_deathTimer = DeathFlashTime;
+
+		// 打死一个给玩家加 coin（存在 Player.Coins 上，通关时才结算带出关卡）
+		if (CoinReward > 0 && GetTree().GetFirstNodeInGroup(Player.GroupName) is Player killer)
+		{
+			killer.AddCoin(CoinReward);
+		}
 
 		EmitSignal(SignalName.Died);
 		GD.Print($"[{Name}] 被消灭");

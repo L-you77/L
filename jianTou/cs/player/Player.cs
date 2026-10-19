@@ -9,7 +9,7 @@ using Godot;
 ///   手感：加速度/摩擦、土狼时间（Coyote Time）、跳跃缓冲（Jump Buffer）、松键小跳。
 ///   战斗：血量 + 受击无敌帧与闪烁 + 击退；从上方踩到敌人会反弹并消灭它；
 ///         J 近战（NearHit，冷却 3 秒）、U 远程（FarHit，冷却 5 秒）。
-///   梯子：站进 tiZi 区域后不吃重力，按 上/下 攀爬。
+///   梯子：站进 tiZi 区域后不吃重力，按 上/下 攀爬；**连按两次跳跃键可以跳离梯子**。
 ///   死亡：掉出地图或血量归零，等 UI 的重来按钮。
 /// </summary>
 public partial class Player : CharacterBody2D, IDamageable
@@ -122,7 +122,23 @@ public partial class Player : CharacterBody2D, IDamageable
 	[ExportGroup("梯子")]
 
 	/// <summary>爬梯速度（像素/秒）。</summary>
+	/// <summary>梯子上连续按两次跳跃键、两次之间最长的间隔（秒）。</summary>
+	[Export] public float LadderJumpWindow = 0.35f;
+
+	/// <summary>从梯子上跳起后，多久之内不再重新抓住梯子（否则会被判定回梯子上、原地卡住）。</summary>
+	[Export] public float LadderJumpLockTime = 0.3f;
+
 	[Export] public float LadderClimbSpeed = 40f;
+
+	[ExportGroup("相机")]
+	/// <summary>镜头是否限制在关卡 TileMapLayer 范围内（视野不会露出地图外面）。</summary>
+	[Export] public bool LimitCameraToTileMap = true;
+
+	/// <summary>镜头范围额外放宽多少像素（0 = 严格贴合地形边界）。</summary>
+	[Export] public int CameraLimitPadding = 0;
+
+	/// <summary>关卡里地形层的节点名（相机范围按它的实际使用区域算）。</summary>
+	private const string TileMapLayerName = "TileMapLayer";
 
 	[ExportGroup("死亡与重生")]
 
@@ -169,6 +185,12 @@ public partial class Player : CharacterBody2D, IDamageable
 
 	/// <summary>跳跃初速度倍率（"跳得更高"强化累加）。</summary>
 	public float JumpMultiplier { get; private set; } = 1f;
+
+	/// <summary>额外的空中跳跃次数（"空中跳跃"强化累加）。</summary>
+	public int AirJumpCount { get; private set; }
+
+	/// <summary>本次离地后还剩几次空中跳（落地或在梯子上时补满）。</summary>
+	public int AirJumpsLeft { get; private set; }
 
 	/// <summary>是否已经拿到近战武器（没有时按 J 无效）。</summary>
 	public bool HasNearHit { get; private set; }
@@ -232,8 +254,17 @@ public partial class Player : CharacterBody2D, IDamageable
 	// 梯子
 	private readonly List<TiZi> _ladders = new();
 
-	/// <summary>是否站在梯子上。</summary>
-	public bool IsOnLadder => _ladders.Count > 0;
+	/// <summary>梯子上连按跳：距离上一次按跳还剩多久算"连上"。</summary>
+	private float _ladderTapTimer;
+
+	/// <summary>梯子上连按跳：已经按了几下。</summary>
+	private int _ladderTaps;
+
+	/// <summary>&gt; 0 时暂时不算站在梯子上（从梯子上跳起来后的短暂锁定）。</summary>
+	private float _ladderIgnoreTimer;
+
+	/// <summary>是否站在梯子上（跳离梯子的短暂锁定期间算"不在"）。</summary>
+	public bool IsOnLadder => _ladders.Count > 0 && _ladderIgnoreTimer <= 0f;
 
 	public override void _Ready()
 	{
@@ -259,7 +290,55 @@ public partial class Player : CharacterBody2D, IDamageable
 
 		SetUpAttacks();
 
+		// 镜头不越过关卡地形边界
+		ApplyCameraLimits();
+
+		// 商城里买的永久强化，在这里一次性打给玩家（没有商城进度时什么也不做）
+		GameState.Instance?.ApplyPermanent(this);
+
 		EmitSignal(SignalName.HealthChanged, Health, MaxHealth);
+	}
+
+	/// <summary>
+	/// 把 Camera2D 的移动范围限制在关卡 TileMapLayer 用到的区域上：
+	/// 镜头推到地图边缘就停住，不会把地图外面的空白露出来。
+	///
+	/// 判定方式：玩家所在关卡（父节点）下**名字叫 TileMapLayer** 的节点即为地图范围，
+	/// 所以每个有地形层的关卡都自动生效，不需要逐关配置。
+	/// </summary>
+	private void ApplyCameraLimits()
+	{
+		if (!LimitCameraToTileMap)
+		{
+			return;
+		}
+
+		if (GetNodeOrNull<Camera2D>("Camera2D") is not Camera2D camera)
+		{
+			return;
+		}
+
+		if (GetParent()?.GetNodeOrNull<TileMapLayer>(TileMapLayerName) is not TileMapLayer map)
+		{
+			return;
+		}
+
+		Rect2I used = map.GetUsedRect();
+		if (used.Size.X <= 0 || used.Size.Y <= 0)
+		{
+			return;
+		}
+
+		Vector2I tile = map.TileSet?.TileSize ?? new Vector2I(8, 8);
+		int originX = Mathf.RoundToInt(map.GlobalPosition.X);
+		int originY = Mathf.RoundToInt(map.GlobalPosition.Y);
+
+		camera.LimitLeft = originX + used.Position.X * tile.X - CameraLimitPadding;
+		camera.LimitTop = originY + used.Position.Y * tile.Y - CameraLimitPadding;
+		camera.LimitRight = originX + (used.Position.X + used.Size.X) * tile.X + CameraLimitPadding;
+		camera.LimitBottom = originY + (used.Position.Y + used.Size.Y) * tile.Y + CameraLimitPadding;
+
+		GD.Print($"[Player] 相机限制到 TileMapLayer：({camera.LimitLeft}, {camera.LimitTop}) ~ ({camera.LimitRight}, {camera.LimitBottom})");
 	}
 
 	/// <summary>
@@ -374,6 +453,7 @@ public partial class Player : CharacterBody2D, IDamageable
 		}
 
 		// --- 纵向：梯子上不吃重力，按 上/下 攀爬；否则正常重力 ---
+		_ladderIgnoreTimer = Mathf.Max(0f, _ladderIgnoreTimer - dt);
 		bool onLadder = IsOnLadder;
 		if (onLadder)
 		{
@@ -388,6 +468,48 @@ public partial class Player : CharacterBody2D, IDamageable
 			velocity.Y = Mathf.Min(velocity.Y + Gravity * dt, MaxFallSpeed);
 		}
 
+		// --- 落地 / 在梯子上：把空中跳补满 ---
+		if (onFloor || onLadder)
+		{
+			AirJumpsLeft = AirJumpCount;
+		}
+
+		// --- 梯子上连按两次跳跃键：跳离梯子 ---
+		// 梯子上 ↑ 同时是"往上爬"，所以单按只爬；在 LadderJumpWindow 内再按一次才算起跳。
+		if (onLadder)
+		{
+			if (jumpPressed)
+			{
+				_ladderTaps = _ladderTapTimer > 0f ? _ladderTaps + 1 : 1;
+				_ladderTapTimer = LadderJumpWindow;
+			}
+			else
+			{
+				_ladderTapTimer = Mathf.Max(0f, _ladderTapTimer - dt);
+			}
+
+			if (_ladderTaps >= 2)
+			{
+				_ladderTaps = 0;
+				_ladderTapTimer = 0f;
+
+				// 跳起来后短暂"不算在梯子上"，否则下一帧又被梯子抓住、原地卡住
+				_ladderIgnoreTimer = LadderJumpLockTime;
+
+				velocity.Y = -JumpForce * JumpMultiplier;
+				_jumpNotCut = true;
+				_jumpBufferTimer = 0f;
+				onLadder = false;
+
+				GD.Print("[Player] 梯子上起跳");
+			}
+		}
+		else
+		{
+			_ladderTaps = 0;
+			_ladderTapTimer = 0f;
+		}
+
 		// --- 起跳（在梯子上 Up 是往上爬，不触发跳跃） ---
 		if (!onLadder && _jumpBufferTimer > 0f && _coyoteTimer > 0f)
 		{
@@ -395,6 +517,14 @@ public partial class Player : CharacterBody2D, IDamageable
 			_jumpNotCut = true;
 			_jumpBufferTimer = 0f;
 			_coyoteTimer = 0f;
+		}
+		else if (!onLadder && _jumpBufferTimer > 0f && AirJumpsLeft > 0)
+		{
+			// 空中跳（"空中跳跃"强化）：重力已经拉下来的速度直接重置成起跳速度
+			AirJumpsLeft--;
+			velocity.Y = -JumpForce * JumpMultiplier;
+			_jumpNotCut = true;
+			_jumpBufferTimer = 0f;
 		}
 
 		// --- 松键小跳 ---
@@ -665,6 +795,17 @@ public partial class Player : CharacterBody2D, IDamageable
 
 			case UpgradeEffect.DownSpeed:
 				DownSpeedMultiplier += SpeedUpPerLevel;
+				break;
+
+			case UpgradeEffect.AirJump:
+				AirJumpCount++;
+				AirJumpsLeft = AirJumpCount;
+				break;
+
+			case UpgradeEffect.MaxHealth:
+				MaxHealth += 1;
+				Health = Mathf.Min(MaxHealth, Health + 1);
+				EmitSignal(SignalName.HealthChanged, Health, MaxHealth);
 				break;
 
 			case UpgradeEffect.UnlockNearHit:

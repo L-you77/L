@@ -55,7 +55,7 @@ public partial class TongGuan : Area2D
 
 	private void OnBodyEntered(Node2D body)
 	{
-		if (IsCleared || body is not Player)
+		if (IsCleared || body is not Player player)
 		{
 			return;
 		}
@@ -68,6 +68,9 @@ public partial class TongGuan : Area2D
 			shape.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
 		}
 
+		// 只有通关才把这一关捡到的 coin 带出去
+		BankCoins(player);
+
 		EmitSignal(SignalName.Cleared);
 		GD.Print($"[TongGuan] 通关（下一关：{(string.IsNullOrEmpty(NextScenePath) ? "无" : NextScenePath)}）");
 
@@ -77,6 +80,17 @@ public partial class TongGuan : Area2D
 		{
 			Visible = false;
 		}
+	}
+
+	/// <summary>通关结算：把关卡里捡到的 coin 带出关卡（没通关就不会走到这里）。</summary>
+	private void BankCoins(Player player)
+	{
+		if (player == null || player.Coins <= 0)
+		{
+			return;
+		}
+
+		GameState.Instance?.BankCoins(player.Coins);
 	}
 
 	/// <summary>弹出通关界面并暂停游戏。</summary>

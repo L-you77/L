@@ -11,7 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="9_7raok"]
 [ext_resource type="Texture2D" uid="uid://df12o3xy5ax1" path="res://ps/scene/wuXian.png" id="10_f4nla"]
 [ext_resource type="Texture2D" uid="uid://bh04x3dnry4fo" path="res://ps/scene/qiDai.png" id="11_wk4h4"]
-[ext_resource type="Script" path="res://cs/ui/Home2Menu.cs" id="12_home2"]
+[ext_resource type="Script" uid="uid://br2tp3l8ovk36" path="res://cs/ui/Home2Menu.cs" id="12_home2"]
+[ext_resource type="Texture2D" uid="uid://h1rpvgx2wmac" path="res://ps/coin/coin.png" id="13_mkujn"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_logo"]
 animations = [{
@@ -48,14 +49,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("12_home2")
 
-[node name="Background" type="ColorRect" parent="." unique_id=2010000002]
+[node name="Background" type="ColorRect" parent="." unique_id=1876745164]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.89788103, 0.89846134, 0.9236047, 1)
+color = Color(0.28458384, 0.28461993, 0.33475712, 1)
 
 [node name="Divider" type="ColorRect" parent="." unique_id=2010000005]
 layout_mode = 1
@@ -64,10 +65,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = 36.0
-offset_right = 100.0
-offset_bottom = 38.0
+offset_left = -126.0
+offset_top = 318.0
+offset_right = 74.0
+offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.35)
@@ -156,3 +157,34 @@ stretch_mode = 5
 position = Vector2(706, 464)
 scale = Vector2(0.18399996, 0.28773594)
 texture = ExtResource("11_wk4h4")
+
+[node name="ShopButton" type="TextureButton" parent="." unique_id=1598550735]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -110.0
+offset_top = 22.0
+offset_right = -22.0
+offset_bottom = 110.0
+grow_horizontal = 0
+focus_mode = 0
+texture_normal = ExtResource("13_mkujn")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopLabel" type="Label" parent="." unique_id=607439029]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -122.0
+offset_top = 114.0
+offset_right = -10.0
+offset_bottom = 142.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.85, 0.85, 0.87, 1)
+theme_override_font_sizes/font_size = 20
+text = "商城"
+horizontal_alignment = 1
+vertical_alignment = 1

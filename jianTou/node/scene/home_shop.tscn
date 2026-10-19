@@ -1,0 +1,321 @@
+[gd_scene format=3 uid="uid://dhrey0oo37i00"]
+
+[ext_resource type="Script" uid="uid://c6cwjh78r2tbn" path="res://cs/ui/HomeShopMenu.cs" id="1_shop"]
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="3_exit"]
+[ext_resource type="Texture2D" uid="uid://h1rpvgx2wmac" path="res://ps/coin/coin.png" id="4_coin"]
+[ext_resource type="Texture2D" uid="uid://eep6xrqlijdo" path="res://ps/player/JiaZai/JiaZai100.png" id="4_vw7va"]
+[ext_resource type="Texture2D" uid="uid://cb2ariysfqsc4" path="res://ps/player/JiaZai/1.png" id="5_rjalt"]
+[ext_resource type="Texture2D" uid="uid://dbubxg2tij4ly" path="res://ps/player/JiaZai/2.png" id="6_grqjy"]
+[ext_resource type="Texture2D" uid="uid://bljbsojnx3os2" path="res://ps/player/JiaZai/3.png" id="7_dslni"]
+[ext_resource type="Texture2D" uid="uid://b8085hcvluop3" path="res://ps/player/JiaZai/4.png" id="8_0ayqt"]
+[ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="9_04uus"]
+[ext_resource type="Texture2D" uid="uid://buewd2axtncto" path="res://ps/player/eye.png" id="10_eye"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bul85"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_vw7va")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_rjalt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_grqjy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_dslni")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_0ayqt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_04uus")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag_normal"]
+bg_color = Color(0.960784, 0.952941, 0.933333, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag_hover"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="HomeShop" type="Control" unique_id=2030000001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shop")
+
+[node name="Background" type="ColorRect" parent="." unique_id=2030000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.8685335, 0.8684866, 0.90358883, 1)
+
+[node name="Title" type="Label" parent="." unique_id=2030000003]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -222.0
+offset_right = 320.0
+offset_bottom = -162.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 40
+text = "商城"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CoinIcon" type="TextureRect" parent="." unique_id=2030000005]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -62.0
+offset_top = -86.0
+offset_right = -22.0
+offset_bottom = -46.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_coin")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CoinLabel" type="Label" parent="." unique_id=2030000006]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -10.0
+offset_top = -86.0
+offset_right = 200.0
+offset_bottom = -46.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 30
+text = "0"
+vertical_alignment = 1
+
+[node name="BuyButton" type="TextureButton" parent="." unique_id=2030000007]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_right = -74.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Logo" type="AnimatedSprite2D" parent="BuyButton" unique_id=1658631445]
+position = Vector2(47.74999, 48.000004)
+scale = Vector2(0.8449998, 0.8550001)
+sprite_frames = SubResource("SpriteFrames_bul85")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="BuyLabel" type="Label" parent="." unique_id=2030000008]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -222.0
+offset_top = 102.0
+offset_right = -22.0
+offset_bottom = 132.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "升级（8  ）"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Coin" type="Sprite2D" parent="BuyLabel" unique_id=2009881793]
+position = Vector2(125.999985, 13.999991)
+scale = Vector2(0.20249996, 0.19499983)
+texture = ExtResource("4_coin")
+
+[node name="EyeButton" type="TextureButton" parent="." unique_id=2030000012]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 74.0
+offset_right = 170.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("10_eye")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EyeLabel" type="Label" parent="." unique_id=2030000013]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 22.0
+offset_top = 100.0
+offset_right = 222.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "EYE（10  ）
+站着不动"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Coin" type="Sprite2D" parent="EyeLabel" unique_id=2030000014]
+position = Vector2(125.999985, 10.49999)
+scale = Vector2(0.20249996, 0.19499983)
+texture = ExtResource("4_coin")
+
+[node name="Note" type="Label" parent="." unique_id=2030000009]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = 150.0
+offset_right = 320.0
+offset_bottom = 178.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.4, 0.4, 0.44, 1)
+theme_override_font_sizes/font_size = 16
+text = "升级是永久的，下一关开局生效"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BagButton" type="Button" parent="." unique_id=2030000015]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -466.0
+offset_top = 161.0
+offset_right = -356.0
+offset_bottom = 257.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_bag_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_bag_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_bag_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_bag_hover")
+text = "背包"
+
+[node name="BagLabel" type="Label" parent="." unique_id=2030000016]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 236.0
+offset_top = 102.0
+offset_right = 346.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 16
+text = "看看买到了什么"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExitButton" type="TextureButton" parent="." unique_id=2030000010]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 194.0
+offset_right = 536.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("3_exit")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ExitLabel" type="Label" parent="." unique_id=2030000011]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 296.0
+offset_right = 536.0
+offset_bottom = 322.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 18
+text = "返回"
+horizontal_alignment = 1
+vertical_alignment = 1

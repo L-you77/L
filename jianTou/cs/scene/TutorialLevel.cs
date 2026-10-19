@@ -27,6 +27,12 @@ public partial class TutorialLevel : Node2D
 	/// <summary>弹窗标题。</summary>
 	[Export] public string UpgradeTitle = "选择一项强化";
 
+	/// <summary>
+	/// 进关时直接送给玩家的强化次数（不捡 coinSpe 也能点自己几次）。
+	/// 教学关默认 0（靠 coinSpe 提供），主线关卡设成 1~2 就能一开局升级。
+	/// </summary>
+	[Export] public int StartUpgradeCharges = 0;
+
 	/// <summary>强化界面场景路径。</summary>
 	[Export] public string UpgradePanelScenePath = "res://node/ui/upgrade_panel.tscn";
 
@@ -62,6 +68,13 @@ public partial class TutorialLevel : Node2D
 		_touchUi = GetNodeOrNull(TouchUiPath);
 		ApplyInitialButtonVisibility();
 
+		// 开局的赠送次数（主线关卡用，教学关默认 0）
+		if (StartUpgradeCharges > 0
+			&& GetTree().GetFirstNodeInGroup(Player.GroupName) is Player player)
+		{
+			player.AddUpgradeCharge(StartUpgradeCharges);
+		}
+
 		if (_touchUi is TutorialUi ui)
 		{
 			ui.SetHint(HintText);
@@ -95,13 +108,12 @@ public partial class TutorialLevel : Node2D
 			return false;
 		}
 
-		if (!player.TryConsumeUpgradeCharge())
-		{
-			return false;
-		}
-
 		List<UpgradeOption> cards = UpgradePool.Draw(player, Mode);
-		_panel.Open(cards, UpgradeTitle, option => OnPicked(player, option));
+		_panel.Open(
+			cards,
+			UpgradeTitle,
+			option => OnPicked(player, option),
+			() => UpgradePool.Draw(player, Mode));
 		return true;
 	}
 
@@ -113,6 +125,8 @@ public partial class TutorialLevel : Node2D
 			return;
 		}
 
+		// 选中了才扣次数（没选就关掉不消耗，可以再点自己重新抽）
+		player.TryConsumeUpgradeCharge();
 		player.ApplyUpgrade(option.Effect);
 
 		string buttonName = ButtonNameFor(option.Effect);

@@ -70,8 +70,7 @@ sprite_frames = SubResource("SpriteFrames_etsle")
 animation = &"idle"
 
 [node name="Warn" type="Sprite2D" parent="HealthIcon" unique_id=1837421691]
-visible = false
-position = Vector2(81.25, 23.000002)
+position = Vector2(119, 29)
 scale = Vector2(0.35499993, 0.35999998)
 texture = ExtResource("13_warn")
 
@@ -85,6 +84,19 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 44
 text = "3"
+vertical_alignment = 1
+
+[node name="CoinLabel" type="Label" parent="HealthIcon" unique_id=555414317]
+layout_mode = 0
+offset_left = 344.0
+offset_top = 8.0
+offset_right = 540.0
+offset_bottom = 56.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 34
+text = "0"
 vertical_alignment = 1
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1837421650]

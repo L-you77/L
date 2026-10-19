@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=4 uid="uid://ga10n4qjalsw"]
+[gd_scene format=3 uid="uid://ga10n4qjalsw"]
 
-[ext_resource type="Script" path="res://cs/ui/HomeZhuxianMenu.cs" id="1_menu"]
+[ext_resource type="Script" uid="uid://dvoy8emds8ey2" path="res://cs/ui/HomeZhuxianMenu.cs" id="1_menu"]
 [ext_resource type="Texture2D" uid="uid://dthk1tttvygal" path="res://ps/scene/1.png" id="2_level"]
 [ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="3_exit"]
 
@@ -76,11 +76,11 @@ grow_vertical = 2
 theme_override_constants/separation = 40
 alignment = 1
 
-[node name="Slot1" type="VBoxContainer" parent="LevelList"]
+[node name="Slot1" type="VBoxContainer" parent="LevelList" unique_id=1019146946]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Btn" type="TextureButton" parent="LevelList/Slot1"]
+[node name="Btn" type="TextureButton" parent="LevelList/Slot1" unique_id=133715968]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 focus_mode = 0
@@ -88,19 +88,19 @@ texture_normal = ExtResource("2_level")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="LevelList/Slot1"]
+[node name="Label" type="Label" parent="LevelList/Slot1" unique_id=987396585]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
 theme_override_font_sizes/font_size = 20
 text = "第一关"
 horizontal_alignment = 1
 
-[node name="Slot2" type="VBoxContainer" parent="LevelList"]
+[node name="Slot2" type="VBoxContainer" parent="LevelList" unique_id=1960375356]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Btn" type="TextureButton" parent="LevelList/Slot2"]
+[node name="Btn" type="TextureButton" parent="LevelList/Slot2" unique_id=1523073305]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 focus_mode = 0
@@ -108,19 +108,19 @@ texture_normal = ExtResource("2_level")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="LevelList/Slot2"]
+[node name="Label" type="Label" parent="LevelList/Slot2" unique_id=1640362386]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
 theme_override_font_sizes/font_size = 20
 text = "第二关"
 horizontal_alignment = 1
 
-[node name="Slot3" type="VBoxContainer" parent="LevelList"]
+[node name="Slot3" type="VBoxContainer" parent="LevelList" unique_id=418780690]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Btn" type="TextureButton" parent="LevelList/Slot3"]
+[node name="Btn" type="TextureButton" parent="LevelList/Slot3" unique_id=996692658]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 focus_mode = 0
@@ -128,7 +128,7 @@ texture_normal = ExtResource("2_level")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="LevelList/Slot3"]
+[node name="Label" type="Label" parent="LevelList/Slot3" unique_id=280353016]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
 theme_override_font_sizes/font_size = 20

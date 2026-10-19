@@ -40,7 +40,7 @@ public partial class EnemyFar : EnemyBase
 	[Export] public float WindupTime = 0.45f;
 
 	/// <summary>弹体飞行速度（像素/秒）。</summary>
-	[Export] public float BulletSpeed = 40f;
+	[Export] public float BulletSpeed = 90f;
 
 	/// <summary>弹体伤害。</summary>
 	[Export] public int BulletDamage = 1;

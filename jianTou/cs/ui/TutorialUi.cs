@@ -19,6 +19,18 @@ public partial class TutorialUi : CanvasLayer
 	/// <summary>Esc 也能开关暂停。</summary>
 	[Export] public bool PauseWithEscape = true;
 
+	/// <summary>
+	/// 自带右上角那个暂停按钮要不要启用。
+	/// 主线关卡（node_1）已经有 ui.tscn 的暂停面板，把它关掉免得两个暂停键打架。
+	/// </summary>
+	[Export] public bool EnablePauseButton = true;
+
+	/// <summary>
+	/// 进关时把所有触摸按钮直接显示出来（主线关卡用：左右上下 + 近战 + 远程全开）。
+	/// 教学关不用勾，交给 TutorialLevel 的各个 Show*Button 控制。
+	/// </summary>
+	[Export] public bool ShowAllButtonsOnStart = false;
+
 	private Control _pausePanel;
 	private Control _touchLayer;
 	private TextureButton _pauseButton;
@@ -39,7 +51,69 @@ public partial class TutorialUi : CanvasLayer
 		Bind("Root/PausePanel/ResumeButton", () => SetPaused(false));
 		Bind("Root/PausePanel/ExitButton", ExitLevel);
 
+		if (!EnablePauseButton)
+		{
+			// 这个关卡用自己的暂停面板（ui.tscn 里的 PauseMenu），本 UI 的暂停键直接不显示
+			if (_pauseButton != null)
+			{
+				_pauseButton.Visible = false;
+			}
+			if (_pausePanel != null)
+			{
+				_pausePanel.Visible = false;
+			}
+		}
+
+		if (ShowAllButtonsOnStart)
+		{
+			ShowAllButtons();
+		}
+
 		SetPaused(false);
+	}
+
+	/// <summary>把所有触摸按钮设为可见（不改它们的绑定，只是显隐）。</summary>
+	private void ShowAllButtons()
+	{
+		if (_touchLayer == null)
+		{
+			return;
+		}
+
+		ShowButtonsRecursive(_touchLayer);
+		_touchLayer.Visible = true;
+	}
+
+	private static void ShowButtonsRecursive(Node root)
+	{
+		foreach (Node child in root.GetChildren())
+		{
+			if (child is TouchScreenButton button)
+			{
+				button.Visible = true;
+				continue;
+			}
+
+			if (child.GetChildCount() > 0)
+			{
+				ShowButtonsRecursive(child);
+			}
+		}
+	}
+
+	/// <summary>别的暂停源（ui.tscn 的 PauseMenu）暂停时，把触摸按钮一起藏起来。</summary>
+	public override void _Process(double delta)
+	{
+		if (_touchLayer == null)
+		{
+			return;
+		}
+
+		bool shouldShow = !GetTree().Paused;
+		if (_touchLayer.Visible != shouldShow)
+		{
+			_touchLayer.Visible = shouldShow;
+		}
 	}
 
 	/// <summary>设置顶部的关卡提示（空字符串 = 不显示）。屏幕空间文字，任何缩放下都清晰。</summary>
@@ -56,7 +130,7 @@ public partial class TutorialUi : CanvasLayer
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		if (!PauseWithEscape || !@event.IsActionPressed("ui_cancel"))
+		if (!EnablePauseButton || !PauseWithEscape || !@event.IsActionPressed("ui_cancel"))
 		{
 			return;
 		}
@@ -98,7 +172,8 @@ public partial class TutorialUi : CanvasLayer
 		}
 		if (_pauseButton != null)
 		{
-			_pauseButton.Visible = !paused;
+			// 关掉自带暂停键的关卡（主线）永远不显示它
+			_pauseButton.Visible = EnablePauseButton && !paused;
 		}
 		if (_touchLayer != null)
 		{

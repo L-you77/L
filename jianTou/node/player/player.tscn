@@ -191,6 +191,8 @@ collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_knqg0")
 Gravity = 1000.0
+NearHitCooldown = 1.0
+FarHitCooldown = 3.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=455800996]
 shape = SubResource("RectangleShape2D_knqg0")
@@ -248,6 +250,7 @@ texture = ExtResource("15_warn")
 [node name="NearHitPivot" type="Node2D" parent="." unique_id=2030000001]
 
 [node name="NearHit" type="Sprite2D" parent="NearHitPivot" unique_id=881431124]
+visible = false
 position = Vector2(2.9999998, -3.0000005)
 rotation = -0.7120943
 scale = Vector2(0.04, 0.04)

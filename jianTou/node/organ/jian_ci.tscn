@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=4]
+
+[ext_resource type="Texture2D" uid="uid://c7quikitknp3o" path="res://ps/tileMap/jianCi.png" id="1_tex"]
+[ext_resource type="Script" path="res://cs/core/HitBox.cs" id="2_hit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spike"]
+size = Vector2(7, 5)
+
+[node name="jianCi" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_tex")
+
+[node name="HitBox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 64
+monitorable = false
+script = ExtResource("2_hit")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+position = Vector2(0, 1.5)
+shape = SubResource("RectangleShape2D_spike")

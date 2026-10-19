@@ -1,3 +1,5 @@
+using Godot;
+
 /// <summary>
 /// 场景路径集中管理：以后挪场景文件只改这里。
 /// </summary>
@@ -9,6 +11,12 @@ public static class ScenePaths
 	/// <summary>第二层主页：教学 / 主线。</summary>
 	public const string Home2 = "res://node/scene/home_2.tscn";
 
+	/// <summary>商城。</summary>
+	public const string Shop = "res://node/scene/home_shop.tscn";
+
+	/// <summary>背包（从商城进入，列出买到的永久道具，可卖出）。</summary>
+	public const string Bag = "res://node/scene/home_bag.tscn";
+
 	/// <summary>教学选关界面。</summary>
 	public const string TutorialSelect = "res://node/scene/home_jiaoxue.tscn";
 
@@ -17,6 +25,9 @@ public static class ScenePaths
 
 	/// <summary>主线关卡。</summary>
 	public const string Game = "res://node/scene/node_1.tscn";
+
+	/// <summary>主线第一关的地下区域（在 node_1 里按住"向下"钻下去进入）。</summary>
+	public const string Main1_1 = "res://node/scene/node_1_1.tscn";
 
 	/// <summary>教学第一关：向右。</summary>
 	public const string TutorialRight = "res://node/jiaoXue/node_right.tscn";
@@ -35,4 +46,35 @@ public static class ScenePaths
 
 	/// <summary>教学第六关：向下（爬梯子）。</summary>
 	public const string TutorialDown = "res://node/jiaoXue/node_down.tscn";
+
+	/// <summary>
+	/// 关卡里点"退出"该回哪一屏：教学关（node/jiaoXue/）→ 教学选关，
+	/// 主线关（node_1 / node_1_1 ...）→ 主线选关，认不出来就回主页。
+	/// </summary>
+	public static string SelectSceneFor(string levelScenePath)
+	{
+		if (string.IsNullOrEmpty(levelScenePath))
+		{
+			return Home;
+		}
+
+		if (levelScenePath.Contains("/jiaoXue/"))
+		{
+			return TutorialSelect;
+		}
+
+		if (levelScenePath.Contains("/node_1"))
+		{
+			return MainSelect;
+		}
+
+		return Home;
+	}
+
+	/// <summary>当前正在运行的关卡 → 它对应的选关界面。</summary>
+	public static string CurrentLevelSelect(SceneTree tree)
+	{
+		string path = tree?.CurrentScene?.SceneFilePath ?? string.Empty;
+		return SelectSceneFor(path);
+	}
 }

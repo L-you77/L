@@ -13,6 +13,14 @@ using Godot;
 /// </summary>
 public partial class IdleWatcher : Node2D
 {
+	[ExportGroup("解锁")]
+
+	/// <summary>
+	/// 需要先在商城花 10 coin 买到 EYE，这套"静止 → warn → 白块 + 眼睛"才会生效。
+	/// 没买之前这里完全不动。想让它无条件生效就把这个勾去掉。
+	/// </summary>
+	[Export] public bool RequireEyeUnlock = true;
+
 	[ExportGroup("计时")]
 
 	/// <summary>需要连续静止多少秒才触发 warn。</summary>
@@ -108,6 +116,17 @@ public partial class IdleWatcher : Node2D
 			return;
 		}
 
+		// 没在商城买到 EYE 之前，这套功能完全不启动
+		if (!IsUnlocked)
+		{
+			_idleTimer = 0f;
+			if (_state != State.Idle)
+			{
+				ResetWatcher();
+			}
+			return;
+		}
+
 		// 贴地时忽略纵向速度残留（落地后 Velocity.Y 可能有极小残值，会让"静止"判定永远不成立）
 		bool onFloor = _player.IsOnFloor();
 		Vector2 velocity = _player.Velocity;
@@ -153,6 +172,9 @@ public partial class IdleWatcher : Node2D
 				break;
 		}
 	}
+
+	/// <summary>EYE 是否已解锁（没接 GameState 时按"未解锁"处理）。</summary>
+	private bool IsUnlocked => !RequireEyeUnlock || (GameState.Instance?.EyeUnlocked ?? false);
 
 	/// <summary>外部需要重置时调用（比如复活）。</summary>
 	public void ResetWatcher()

@@ -71,6 +71,23 @@
 - 解析 tile_map_data：前 2 字节是头，之后每条 12 字节 `<hhhhhh`=(x,y,source,atlas_x,atlas_y,alt)；
   **只有 atlas_x==0 的图块带物理多边形**。
 
+## 机关 SwitchGate（2026-10-19 版）
+- `cs/organ/SwitchGate.cs` 直接挂在关卡里的色块标记 Sprite2D（R / B）上；
+  **触发 = 玩家角色碰到**（脚本 `_Ready` 里自建圆形 `Area2D`：layer 0 / mask = `GameLayers.PlayerBody`，
+  并把 Area 的 scale 取倒数抵消精灵的 `(1,1.75)` 缩放）。不需要按键、不需要点鼠标。
+- 效果分四类，可混用：
+  `HideOnUse`（立刻隐藏）/ `SlideDownOnUse`（往下滑 `SlideDistance` + 淡出后隐藏，**不动 TileMapLayer**）/
+  `RevealOnUse`（进关全关，触发后出现）/ `StartOnUse`（进关可见+有碰撞但动画冻住，触发后开始动）。
+  `EraseCells` 保留但默认 Size=0，**不要再拿它改地形**。
+- 移动平台靠 `AnimationPlayer` 驱动 `PathFollow2D:progress_ratio`，冻结用 `SpeedScale = 0`
+  （**不要 Stop()**，Stop 会清 CurrentAnimation）；启动用 `Play()` + `SpeedScale = 1`。
+- 开关触发后**自己不消失**，只把触碰 Area 的 `Monitoring` 关掉。
+
+## 主线关卡 node_1 的触屏按钮
+- node_1 挂了一份 `node/ui/tutorial_ui.tscn` 实例，`ShowAllButtonsOnStart = true` → 左右上下 + 近战 + 远程全开。
+- 主线已有 `ui.tscn` 的 PauseMenu，所以这份 UI 用 `EnablePauseButton = false` 关掉自带暂停键；
+  暂停时靠 `TutorialUi._Process` 检测 `GetTree().Paused` 把触摸层藏起来（两个暂停源不会打架）。
+
 ## 道具约定
 - 金币计数存在 `Player.Coins`（内存，重开关卡归零），`AddCoin()` + `CoinChanged` 信号。
 - `Coin` 用 `BodyEntered` 检测玩家**本体**（layer 0 / mask 4=PlayerBody / monitorable=false），

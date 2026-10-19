@@ -8,10 +8,12 @@ using Godot;
 /// 用法：
 ///   UpgradePanel panel = scene.Instantiate&lt;UpgradePanel&gt;();
 ///   AddChild(panel);
-///   panel.Open(cards, "选择一项强化", option =&gt; player.ApplyUpgrade(option.Effect));
+///   panel.Open(cards, "选择一项强化", option =&gt; player.ApplyUpgrade(option.Effect),
+///              refresh: () =&gt; UpgradePool.Draw(player, mode));
 ///
-/// 弹出时会暂停场景树（ProcessMode = Always 保证自己还能响应），选完自动恢复。
-/// 必须选一张才会关闭 —— 教学关卡就是靠"不选就走不了"来引导玩家的。
+/// 弹出时会暂停场景树（ProcessMode = Always 保证自己还能响应），选完/取消后自动恢复。
+/// **不再强制必须选一项**：按 Esc（或点右下角的关闭按钮以外的方式）就能关掉，关了算放弃。
+/// 传了 refresh 回调才会显示"刷新"按钮 —— 点一次重新抽三张。
 /// </summary>
 public partial class UpgradePanel : CanvasLayer
 {
@@ -31,7 +33,10 @@ public partial class UpgradePanel : CanvasLayer
 
 	private Control _root;
 	private Label _title;
+	private Button _refreshButton;
 	private Action<UpgradeOption> _onPick;
+	private Func<List<UpgradeOption>> _refresh;
+	private Action _onCancel;
 	private float _inputGuard;
 
 	/// <summary>界面是否正开着。</summary>
@@ -46,6 +51,12 @@ public partial class UpgradePanel : CanvasLayer
 
 		_root = GetNodeOrNull<Control>("Root");
 		_title = GetNodeOrNull<Label>("Root/Title");
+		_refreshButton = GetNodeOrNull<Button>("Root/RefreshButton");
+
+		if (_refreshButton != null)
+		{
+			_refreshButton.Pressed += OnRefreshPressed;
+		}
 
 		for (int i = 0; i < MaxCards; i++)
 		{
@@ -73,11 +84,30 @@ public partial class UpgradePanel : CanvasLayer
 		}
 	}
 
+	/// <summary>Esc = 不选，直接关掉（会解除暂停）。</summary>
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		if (!IsOpen || !@event.IsActionPressed("ui_cancel"))
+		{
+			return;
+		}
+
+		Cancel();
+		GetViewport().SetInputAsHandled();
+	}
+
 	/// <summary>
 	/// 打开界面并填充卡片。打开后 0.12 秒内的点击会被吞掉，
 	/// 避免"点玩家那一下"顺手把刚弹出来的卡也点掉。
 	/// </summary>
-	public void Open(IReadOnlyList<UpgradeOption> options, string title, Action<UpgradeOption> onPick)
+	/// <param name="refresh">点"刷新"时重新抽卡的回调；传 null 就不显示刷新按钮。</param>
+	/// <param name="onCancel">没选就关掉时调用（比如商城要退钱）。</param>
+	public void Open(
+		IReadOnlyList<UpgradeOption> options,
+		string title,
+		Action<UpgradeOption> onPick,
+		Func<List<UpgradeOption>> refresh = null,
+		Action onCancel = null)
 	{
 		if (options == null || options.Count == 0)
 		{
@@ -85,19 +115,64 @@ public partial class UpgradePanel : CanvasLayer
 			return;
 		}
 
-		_pending.Clear();
-		for (int i = 0; i < options.Count; i++)
-		{
-			_pending.Add(options[i]);
-		}
-
 		_onPick = onPick;
+		_refresh = refresh;
+		_onCancel = onCancel;
 		IsOpen = true;
 		_inputGuard = 0.12f;
 
 		if (_title != null && !string.IsNullOrEmpty(title))
 		{
 			_title.Text = title;
+		}
+
+		if (_refreshButton != null)
+		{
+			_refreshButton.Visible = refresh != null;
+		}
+
+		FillCards(options);
+
+		GetTree().Paused = true;
+		SetOpen(true);
+	}
+
+	/// <summary>关闭界面并取消暂停（不触发任何回调 = 放弃这次强化）。</summary>
+	public void Close()
+	{
+		if (!IsOpen)
+		{
+			return;
+		}
+
+		IsOpen = false;
+		_onPick = null;
+		_refresh = null;
+		_onCancel = null;
+		SetOpen(false);
+		GetTree().Paused = false;
+	}
+
+	/// <summary>没选就关掉。</summary>
+	public void Cancel()
+	{
+		if (!IsOpen)
+		{
+			return;
+		}
+
+		Action onCancel = _onCancel;
+		Close();
+		onCancel?.Invoke();
+	}
+
+	/// <summary>把选项填进三张卡（打开和刷新都走这里）。</summary>
+	private void FillCards(IReadOnlyList<UpgradeOption> options)
+	{
+		_pending.Clear();
+		for (int i = 0; i < options.Count; i++)
+		{
+			_pending.Add(options[i]);
 		}
 
 		for (int i = 0; i < _cards.Count; i++)
@@ -127,23 +202,24 @@ public partial class UpgradePanel : CanvasLayer
 				_descs[i].Modulate = option.IsUnlock ? new Color(0.72f, 0.42f, 0f) : new Color(0.18f, 0.18f, 0.2f);
 			}
 		}
-
-		GetTree().Paused = true;
-		SetOpen(true);
 	}
 
-	/// <summary>关闭界面并取消暂停。</summary>
-	public void Close()
+	/// <summary>刷新：让调用方重新抽一批，再填回卡片。</summary>
+	private void OnRefreshPressed()
 	{
-		if (!IsOpen)
+		if (!IsOpen || _inputGuard > 0f || _refresh == null)
 		{
 			return;
 		}
 
-		IsOpen = false;
-		_onPick = null;
-		SetOpen(false);
-		GetTree().Paused = false;
+		List<UpgradeOption> cards = _refresh();
+		if (cards == null || cards.Count == 0)
+		{
+			return;
+		}
+
+		FillCards(cards);
+		GD.Print("[UpgradePanel] 刷新了选项");
 	}
 
 	private void OnCardPressed(int index)

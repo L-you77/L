@@ -23,6 +23,7 @@ public partial class HealthHud : Control
 	private AnimatedSprite2D _icon;
 	private Sprite2D _warn;
 	private Label _label;
+	private Label _coinLabel;
 	private Vector2 _warnBaseScale = Vector2.One;
 	private float _pulseTime;
 	private bool _warnShown;
@@ -32,6 +33,7 @@ public partial class HealthHud : Control
 		_icon = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
 		_warn = GetNodeOrNull<Sprite2D>("Warn");
 		_label = GetNodeOrNull<Label>("HealthLabel");
+		_coinLabel = GetNodeOrNull<Label>("CoinLabel");
 
 		if (_warn != null)
 		{
@@ -52,9 +54,20 @@ public partial class HealthHud : Control
 		}
 
 		_player.HealthChanged += OnHealthChanged;
+		_player.CoinChanged += OnCoinChanged;
 
 		// 玩家的 HealthChanged 在 _Ready 里已经发过一次（那时 UI 还没连上），这里同步初始值
 		OnHealthChanged(_player.Health, _player.MaxHealth);
+		OnCoinChanged(_player.Coins);
+	}
+
+	/// <summary>金币数：只显示"这一关捡到多少"，通关时才会带出关卡。</summary>
+	private void OnCoinChanged(int coins)
+	{
+		if (_coinLabel != null)
+		{
+			_coinLabel.Text = coins.ToString();
+		}
 	}
 
 	public override void _Process(double delta)
