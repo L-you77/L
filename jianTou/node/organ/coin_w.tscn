@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dka6tghjbfofa"]
+
+[ext_resource type="Texture2D" uid="uid://c8h0ho1lrg68q" path="res://ps/coin/coinW.png" id="1_tex"]
+[ext_resource type="Script" uid="uid://dou0mcday4l7r" path="res://cs/enemy/CoinW.cs" id="2_coinw"]
+[ext_resource type="Script" uid="uid://baiv7xesk8hau" path="res://cs/core/HurtBox.cs" id="3_hurt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_coinw"]
+size = Vector2(100, 100)
+
+[node name="CoinW" type="Sprite2D" unique_id=189074642]
+scale = Vector2(0.14, 0.14)
+texture = ExtResource("1_tex")
+script = ExtResource("2_coinw")
+
+[node name="HurtBox" type="Area2D" parent="." unique_id=769976722]
+collision_layer = 128
+collision_mask = 16
+monitoring = false
+script = ExtResource("3_hurt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=481315324]
+shape = SubResource("RectangleShape2D_coinw")

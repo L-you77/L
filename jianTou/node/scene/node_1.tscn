@@ -162,6 +162,7 @@ StartOnUse = PackedStringArray("MovingPlatform4")
 
 [node name="tongGuan" parent="." unique_id=1761435687 instance=ExtResource("11_hkc34")]
 position = Vector2(19, 297)
+NextScenePath = "res://node/scene/node_1_2.tscn"
 BackScenePath = "res://node/scene/home_zhuxian.tscn"
 
 [node name="B2" type="Sprite2D" parent="." unique_id=71543210]

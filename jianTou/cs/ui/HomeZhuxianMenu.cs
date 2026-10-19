@@ -14,10 +14,10 @@ public partial class HomeZhuxianMenu : Control
 	[Export] public string Level1Path = ScenePaths.Game;
 
 	/// <summary>第二关（留空 = 隐藏）。</summary>
-	[Export] public string Level2Path = "";
+	[Export] public string Level2Path = ScenePaths.Main2;
 
 	/// <summary>第三关（留空 = 隐藏）。</summary>
-	[Export] public string Level3Path = "";
+	[Export] public string Level3Path = ScenePaths.Main3;
 
 	/// <summary>"返回"回哪一层（默认回 home_2）。</summary>
 	[Export] public string BackScenePath = ScenePaths.Home2;

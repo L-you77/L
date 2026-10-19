@@ -29,6 +29,12 @@ public static class ScenePaths
 	/// <summary>主线第一关的地下区域（在 node_1 里按住"向下"钻下去进入）。</summary>
 	public const string Main1_1 = "res://node/scene/node_1_1.tscn";
 
+	/// <summary>主线第二关：升降井。</summary>
+	public const string Main2 = "res://node/scene/node_1_2.tscn";
+
+	/// <summary>主线第三关：通天塔（从底层房间沿梯子往上爬）。</summary>
+	public const string Main3 = "res://node/scene/node_2_3.tscn";
+
 	/// <summary>教学第一关：向右。</summary>
 	public const string TutorialRight = "res://node/jiaoXue/node_right.tscn";
 

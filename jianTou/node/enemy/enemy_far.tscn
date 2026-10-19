@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://baiv7xesk8hau" path="res://cs/core/HurtBox.cs" id="3_04dfj"]
 [ext_resource type="Texture2D" uid="uid://tug1ednpe44j" path="res://ps/player/farHit.png" id="4_3oo28"]
 [ext_resource type="Script" uid="uid://ewai1x2fi8j3" path="res://cs/core/HitBox.cs" id="4_5mr5d"]
-[ext_resource type="Script" path="res://cs/enemy/EnemyFar.cs" id="5_far"]
+[ext_resource type="Script" uid="uid://canykycjp004a" path="res://cs/enemy/EnemyFar.cs" id="5_far"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_byu03"]
 size = Vector2(6, 6)
@@ -58,6 +58,7 @@ script = ExtResource("4_5mr5d")
 shape = SubResource("RectangleShape2D_07lsq")
 
 [node name="FarHit" type="Sprite2D" parent="." unique_id=313439753]
+visible = false
 position = Vector2(-3.9999995, 1.6940659e-21)
 scale = Vector2(0.040000003, 0.040000007)
 texture = ExtResource("4_3oo28")
