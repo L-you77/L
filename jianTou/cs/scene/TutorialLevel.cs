@@ -21,6 +21,7 @@ public partial class TutorialLevel : Node2D
 	public const string GroupName = "tutorial_level";
 
 	/// <summary>这一关的抽取规则。</summary>
+	[ExportGroup("强化抽取")]
 	[Export] public TutorialForceMode Mode = TutorialForceMode.Random;
 
 	/// <summary>弹窗标题。</summary>
@@ -33,14 +34,23 @@ public partial class TutorialLevel : Node2D
 	[Export] public string TouchUiPath = "TutorialUi";
 
 	/// <summary>
-	/// 进关时这四个触摸按钮的初始可见状态（按钮本身在 tutorial_ui.tscn 里，默认全隐藏）。
+	/// 进关时这些触摸按钮的初始可见状态（按钮本身在 tutorial_ui.tscn 里，默认全隐藏）。
 	/// 哪一关一开始就能往哪个方向走，就把它对应的开关勾上；其余等选了强化再放出来。
 	/// </summary>
 	[ExportGroup("初始可见的触摸按钮")]
 	[Export] public bool ShowRightButton = false;
 	[Export] public bool ShowLeftButton = false;
 	[Export] public bool ShowUpButton = false;
+	[Export] public bool ShowDownButton = false;
 	[Export] public bool ShowNearHitButton = false;
+	[Export] public bool ShowFarButton = false;
+
+	/// <summary>
+	/// 顶部那行关卡提示。填在这里就行 —— 运行时会交给 UI 层（屏幕空间）绘制，不会随相机放大变糊。
+	/// 留空 = 不显示。想改字号/颜色去 node/ui/tutorial_ui.tscn 的 Root/Hint。
+	/// </summary>
+	[ExportGroup("关卡提示")]
+	[Export] public string HintText = "";
 
 	private UpgradePanel _panel;
 	private Node _touchUi;
@@ -51,6 +61,11 @@ public partial class TutorialLevel : Node2D
 
 		_touchUi = GetNodeOrNull(TouchUiPath);
 		ApplyInitialButtonVisibility();
+
+		if (_touchUi is TutorialUi ui)
+		{
+			ui.SetHint(HintText);
+		}
 	}
 
 	/// <summary>
@@ -140,8 +155,9 @@ public partial class TutorialLevel : Node2D
 		SetButtonVisible("TBtnR", ShowRightButton);
 		SetButtonVisible("TBtnL", ShowLeftButton);
 		SetButtonVisible("TBtnU", ShowUpButton);
+		SetButtonVisible("TBtnD", ShowDownButton);
 		SetButtonVisible("TBtnNH", ShowNearHitButton);
-		SetButtonVisible("TBtnFH", false);
+		SetButtonVisible("TBtnFH", ShowFarButton);
 	}
 
 	private void RevealButton(string name)
@@ -183,6 +199,7 @@ public partial class TutorialLevel : Node2D
 			UpgradeEffect.SpeedRight => "TBtnR",
 			UpgradeEffect.SpeedLeft => "TBtnL",
 			UpgradeEffect.JumpHeight => "TBtnU",
+			UpgradeEffect.DownSpeed => "TBtnD",
 			UpgradeEffect.UnlockNearHit => "TBtnNH",
 			UpgradeEffect.UnlockFarHit => "TBtnFH",
 			_ => string.Empty,

@@ -184,7 +184,7 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_near"]
-size = Vector2(8, 6)
+size = Vector2(10, 6)
 
 [node name="player" type="CharacterBody2D" unique_id=1430988901]
 collision_layer = 4
@@ -248,7 +248,6 @@ texture = ExtResource("15_warn")
 [node name="NearHitPivot" type="Node2D" parent="." unique_id=2030000001]
 
 [node name="NearHit" type="Sprite2D" parent="NearHitPivot" unique_id=881431124]
-visible = false
 position = Vector2(2.9999998, -3.0000005)
 rotation = -0.7120943
 scale = Vector2(0.04, 0.04)

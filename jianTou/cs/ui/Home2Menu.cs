@@ -4,7 +4,7 @@ using Godot;
 /// 第二层主页（home_2）：教学 / 主线 / 无限 / 退出。
 ///
 ///   · jiaoXue  → 教学选关（home_jiaoxue）
-///   · zhuXian  → 主线关卡（node_1）
+///   · zhuXian  → 主线选关（home_zhuxian），再从那进具体关卡
 ///   · 无限（右下 wuXian 按钮）→ 目前暂用主线关卡，等"无限模式"做出来再改 <see cref="InfiniteScenePath"/>
 ///   · 退出 → 关游戏
 /// </summary>
@@ -13,8 +13,8 @@ public partial class Home2Menu : Control
 	/// <summary>教学选关场景。</summary>
 	[Export] public string TutorialSelectScenePath = ScenePaths.TutorialSelect;
 
-	/// <summary>主线关卡场景。</summary>
-	[Export] public string MainScenePath = ScenePaths.Game;
+	/// <summary>主线选关场景。</summary>
+	[Export] public string MainSelectScenePath = ScenePaths.MainSelect;
 
 	/// <summary>无限模式场景（暂时指向主线，做了再单独建场景）。</summary>
 	[Export] public string InfiniteScenePath = ScenePaths.Game;
@@ -27,7 +27,7 @@ public partial class Home2Menu : Control
 		GetTree().Paused = false;
 
 		Bind("jiaoXue", () => Go(TutorialSelectScenePath));
-		Bind("zhuXian", () => Go(MainScenePath));
+		Bind("zhuXian", () => Go(MainSelectScenePath));
 		Bind("ExitButton2", () => Go(InfiniteScenePath));
 		Bind("ExitButton", QuitGame);
 

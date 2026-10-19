@@ -8,6 +8,8 @@ using Godot;
 ///   Btn2 → node_left （第二关，向左）
 ///   Btn3 → node_up   （第三关，向上）
 ///   Btn4 → node_near_hit（第四关，近战，真随机强化）
+///   Btn5 → node_far_hit （第五关，远程，真随机强化）
+///   Btn6 → node_down    （第六关，向下 / 爬梯子）
 /// </summary>
 public partial class HomeJiaoxueMenu : Control
 {
@@ -15,6 +17,8 @@ public partial class HomeJiaoxueMenu : Control
 	[Export] public string Level2Path = ScenePaths.TutorialLeft;
 	[Export] public string Level3Path = ScenePaths.TutorialUp;
 	[Export] public string Level4Path = ScenePaths.TutorialNearHit;
+	[Export] public string Level5Path = ScenePaths.TutorialFarHit;
+	[Export] public string Level6Path = ScenePaths.TutorialDown;
 
 	/// <summary>"返回"回哪一层（默认回 home_2）。</summary>
 	[Export] public string BackScenePath = ScenePaths.Home2;
@@ -27,6 +31,8 @@ public partial class HomeJiaoxueMenu : Control
 		Bind("Btn2", Level2Path);
 		Bind("Btn3", Level3Path);
 		Bind("Btn4", Level4Path);
+		Bind("Btn5", Level5Path);
+		Bind("Btn6", Level6Path);
 
 		if (GetNodeOrNull<BaseButton>("ExitButton") is BaseButton exit)
 		{

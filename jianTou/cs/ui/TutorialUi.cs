@@ -22,6 +22,7 @@ public partial class TutorialUi : CanvasLayer
 	private Control _pausePanel;
 	private Control _touchLayer;
 	private TextureButton _pauseButton;
+	private Label _hint;
 	private bool _paused;
 
 	public override void _Ready()
@@ -32,12 +33,25 @@ public partial class TutorialUi : CanvasLayer
 		_pausePanel = GetNodeOrNull<Control>("Root/PausePanel");
 		_touchLayer = GetNodeOrNull<Control>("Root/TouchLayer");
 		_pauseButton = GetNodeOrNull<TextureButton>("Root/PauseButton");
+		_hint = GetNodeOrNull<Label>("Root/Hint");
 
 		Bind("Root/PauseButton", () => SetPaused(true));
 		Bind("Root/PausePanel/ResumeButton", () => SetPaused(false));
 		Bind("Root/PausePanel/ExitButton", ExitLevel);
 
 		SetPaused(false);
+	}
+
+	/// <summary>设置顶部的关卡提示（空字符串 = 不显示）。屏幕空间文字，任何缩放下都清晰。</summary>
+	public void SetHint(string text)
+	{
+		if (_hint == null)
+		{
+			return;
+		}
+
+		_hint.Text = text ?? string.Empty;
+		_hint.Visible = !string.IsNullOrEmpty(_hint.Text);
 	}
 
 	public override void _UnhandledInput(InputEvent @event)

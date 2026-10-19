@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://bnc65xng70eap"]
+
+[ext_resource type="Texture2D" uid="uid://d2v0mokwwy6cb" path="res://ps/enemy/move4.png" id="2_13rr1"]
+[ext_resource type="Script" uid="uid://baiv7xesk8hau" path="res://cs/core/HurtBox.cs" id="3_04dfj"]
+[ext_resource type="Texture2D" uid="uid://tug1ednpe44j" path="res://ps/player/farHit.png" id="4_3oo28"]
+[ext_resource type="Script" uid="uid://ewai1x2fi8j3" path="res://cs/core/HitBox.cs" id="4_5mr5d"]
+[ext_resource type="Script" path="res://cs/enemy/EnemyFar.cs" id="5_far"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_byu03"]
+size = Vector2(6, 6)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_07lsq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_13rr1")
+}],
+"loop": true,
+"name": &"move",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_07lsq"]
+size = Vector2(6, 6)
+
+[node name="enemyFar" type="CharacterBody2D" unique_id=1147255065]
+collision_layer = 8
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("5_far")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=911685630]
+shape = SubResource("RectangleShape2D_byu03")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1668619206]
+position = Vector2(0, -3.0517577e-07)
+scale = Vector2(0.044444446, 0.06)
+sprite_frames = SubResource("SpriteFrames_07lsq")
+animation = &"move"
+frame_progress = 0.991783
+
+[node name="HurtBox" type="Area2D" parent="." unique_id=84866679]
+collision_layer = 128
+collision_mask = 16
+monitoring = false
+script = ExtResource("3_04dfj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=2013616335]
+shape = SubResource("RectangleShape2D_07lsq")
+
+[node name="HitBox" type="Area2D" parent="." unique_id=1657107694]
+collision_layer = 32
+collision_mask = 64
+monitorable = false
+script = ExtResource("4_5mr5d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox" unique_id=1556480925]
+shape = SubResource("RectangleShape2D_07lsq")
+
+[node name="FarHit" type="Sprite2D" parent="." unique_id=313439753]
+position = Vector2(-3.9999995, 1.6940659e-21)
+scale = Vector2(0.040000003, 0.040000007)
+texture = ExtResource("4_3oo28")

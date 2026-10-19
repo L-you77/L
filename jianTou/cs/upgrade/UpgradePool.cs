@@ -14,6 +14,8 @@ public enum TutorialForceMode
 	ForceLeft = 2,
 	/// <summary>3 张全是"向上"（node_up）。</summary>
 	ForceUp = 3,
+	/// <summary>3 张全是"向下"（node_down）。</summary>
+	ForceDown = 4,
 }
 
 /// <summary>
@@ -27,6 +29,7 @@ public static class UpgradePool
 	private const string IconRight = "res://ps/player/move/Right.png";
 	private const string IconLeft = "res://ps/player/move/Left.png";
 	private const string IconUp = "res://ps/player/move/Up.png";
+	private const string IconDown = "res://ps/player/move/Down.png";
 	private const string IconNearHit = "res://ps/player/nearHit.png";
 	private const string IconFarHit = "res://ps/player/farHit.png";
 
@@ -53,6 +56,7 @@ public static class UpgradePool
 			TutorialForceMode.ForceRight => Repeat(MakeRight(player)),
 			TutorialForceMode.ForceLeft => Repeat(MakeLeft(player)),
 			TutorialForceMode.ForceUp => Repeat(MakeUp(player)),
+			TutorialForceMode.ForceDown => Repeat(MakeDown(player)),
 			_ => DrawRandom(player),
 		};
 	}
@@ -123,6 +127,18 @@ public static class UpgradePool
 			Title = "跳得更高",
 			Desc = $"跳跃高度 +{FormatPercent(player.JumpUpPerLevel)}",
 			IconPath = IconUp,
+		};
+	}
+
+	/// <summary>"向下"卡：只在 node_down 这种强制向下的教学关出现，顺带把"向下"按钮放出来。</summary>
+	private static UpgradeOption MakeDown(Player player)
+	{
+		return new UpgradeOption
+		{
+			Effect = UpgradeEffect.DownSpeed,
+			Title = "向下加速",
+			Desc = $"向下速度 +{FormatPercent(player.SpeedUpPerLevel)}",
+			IconPath = IconDown,
 		};
 	}
 

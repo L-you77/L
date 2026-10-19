@@ -9,6 +9,8 @@ public enum UpgradeEffect
 	SpeedLeft,
 	/// <summary>跳跃高度提升。</summary>
 	JumpHeight,
+	/// <summary>向下爬梯速度提升（也用来放出"向下"按钮）。</summary>
+	DownSpeed,
 	/// <summary>解锁近战攻击（J）。</summary>
 	UnlockNearHit,
 	/// <summary>近战伤害 +1。</summary>

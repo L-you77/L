@@ -1,0 +1,173 @@
+[gd_scene load_steps=4 format=4 uid="uid://ga10n4qjalsw"]
+
+[ext_resource type="Script" path="res://cs/ui/HomeZhuxianMenu.cs" id="1_menu"]
+[ext_resource type="Texture2D" uid="uid://dthk1tttvygal" path="res://ps/scene/1.png" id="2_level"]
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="3_exit"]
+
+[node name="HomeZhuxian" type="Control" unique_id=900633274]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="." unique_id=2020000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.89788103, 0.89846134, 0.9236047, 1)
+
+[node name="Title" type="Label" parent="." unique_id=2020000003]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -222.0
+offset_right = 320.0
+offset_bottom = -162.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 40
+text = "主线关卡"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SubTitle" type="Label" parent="." unique_id=2020000004]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -158.0
+offset_right = 320.0
+offset_bottom = -128.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 18
+text = "选一关开始"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LevelList" type="HBoxContainer" parent="." unique_id=2020000005]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -40.0
+offset_right = 300.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="Slot1" type="VBoxContainer" parent="LevelList"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Btn" type="TextureButton" parent="LevelList/Slot1"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("2_level")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="LevelList/Slot1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "第一关"
+horizontal_alignment = 1
+
+[node name="Slot2" type="VBoxContainer" parent="LevelList"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Btn" type="TextureButton" parent="LevelList/Slot2"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("2_level")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="LevelList/Slot2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "第二关"
+horizontal_alignment = 1
+
+[node name="Slot3" type="VBoxContainer" parent="LevelList"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Btn" type="TextureButton" parent="LevelList/Slot3"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("2_level")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="LevelList/Slot3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "第三关"
+horizontal_alignment = 1
+
+[node name="ExitButton" type="TextureButton" parent="." unique_id=2020000008]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 194.0
+offset_right = 536.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("3_exit")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ExitLabel" type="Label" parent="." unique_id=2020000009]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 296.0
+offset_right = 536.0
+offset_bottom = 322.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 18
+text = "返回"
+horizontal_alignment = 1
+vertical_alignment = 1

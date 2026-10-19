@@ -31,6 +31,8 @@
   `node_up`(第三关/向上) / `node_near_hit`(第四关/近战，真随机)。
 - 场景路径统一走 `cs/core/ScenePaths.cs`，不要在别处硬编码 `res://node/scene/...`。
 - UI = `node/ui/ui.tscn`，在关卡里挂在一个 `CanvasLayer` 下（不能直接挂 Node2D，会跟着相机缩放）。
+- **相机 zoom = 5，关卡里不要放 Label**：文字会按小字号光栅化再放大 5 倍，必然模糊。
+  所有提示文字走 UI 层的屏幕空间 Label（教学关卡用 `TutorialLevel.HintText` → `TutorialUi.SetHint`）。
 - 角色/敌人/道具/机关分别在 `node/{player,enemy,organ}`；脚本在 `cs/{player,enemy,organ,ui,core,scene,upgrade}`。
 - **中文字体**：`ps/font/simhei.ttf`（从系统复制）+ `project.godot` 的 `[gui] theme/custom_font`，
   所以现在可以放心用中文 Label。新加的字体/贴图需要编辑器扫一次才会导入。
@@ -51,6 +53,13 @@
   **不要**在 `_Ready` 里无条件隐藏所有教学按钮（会误藏 node_left 里本该可见的 TBtnR）。
 - 三选一 UI 是运行时实例化的 `node/ui/upgrade_panel.tscn`（CanvasLayer layer=10，弹出暂停、必选一项）；
   教学暂停面板在同一 CanvasLayer 里（layer=5），Esc 遇到强化界面开着时会跳过。
+
+## 敌人类型（都继承 EnemyBase，能踩死）
+- `Enemy`（enemy.tscn）：地面巡逻，射线探墙/探边缘掉头。
+- `EnemyFly`（enemy_fly.tscn）：`motion_mode=1` 不吃重力，矩形范围随机游荡。
+- `EnemyFar`（enemy_far.tscn）：不吃重力，左右往返 + 视线内蓄力射弹体（`enemy_bullet.tscn`，`EnemyBullet.cs`）。
+  弹体挂到**关卡**上而不是敌人身上，否则会跟着敌人飞。
+- 白底贴图（warn/farHit 那种）当"会动的物件"会画成白方块，需要另做透明底贴图（如 `ps/enemy/enemy_bullet.png`）。
 
 ## 关卡坐标速查（2026-10-17 版，改地形后要重新核对）
 - Tile 8px；主地面 y=240，`FallDeathY=470`（地下层已开放，死亡线挪到地图外 448 之下）。

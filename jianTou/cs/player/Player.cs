@@ -164,6 +164,9 @@ public partial class Player : CharacterBody2D, IDamageable
 	/// <summary>向左移动速度倍率（"向左加速"强化累加）。</summary>
 	public float LeftSpeedMultiplier { get; private set; } = 1f;
 
+	/// <summary>向下爬梯速度倍率（"向下加速"强化累加）。</summary>
+	public float DownSpeedMultiplier { get; private set; } = 1f;
+
 	/// <summary>跳跃初速度倍率（"跳得更高"强化累加）。</summary>
 	public float JumpMultiplier { get; private set; } = 1f;
 
@@ -376,7 +379,9 @@ public partial class Player : CharacterBody2D, IDamageable
 		{
 			// GetAxis("Up", "Down")：上 = -1，下 = +1；不按键就停在梯子上
 			float climbInput = Input.GetAxis("Up", "Down");
-			velocity.Y = climbInput * LadderClimbSpeed;
+			// "向下加速"强化只加快往下爬，往上爬速度不变
+			float climbSpeed = LadderClimbSpeed * (climbInput > 0f ? DownSpeedMultiplier : 1f);
+			velocity.Y = climbInput * climbSpeed;
 		}
 		else if (!onFloor)
 		{
@@ -656,6 +661,10 @@ public partial class Player : CharacterBody2D, IDamageable
 
 			case UpgradeEffect.JumpHeight:
 				JumpMultiplier += JumpUpPerLevel;
+				break;
+
+			case UpgradeEffect.DownSpeed:
+				DownSpeedMultiplier += SpeedUpPerLevel;
 				break;
 
 			case UpgradeEffect.UnlockNearHit:
