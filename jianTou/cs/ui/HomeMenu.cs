@@ -40,13 +40,13 @@ public partial class HomeMenu : Control
 		Resized += LayoutLogo;
 		LayoutLogo();
 
-		TextureButton startButton = GetNodeOrNull<TextureButton>("StartButton");
+		BaseButton startButton = GetNodeOrNull<BaseButton>("StartButton");
 		if (startButton != null)
 		{
 			startButton.Pressed += StartGame;
 		}
 
-		TextureButton exitButton = GetNodeOrNull<TextureButton>("ExitButton");
+		BaseButton exitButton = GetNodeOrNull<BaseButton>("ExitButton");
 		if (exitButton != null)
 		{
 			exitButton.Pressed += QuitGame;

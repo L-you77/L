@@ -310,6 +310,9 @@ public partial class Player : CharacterBody2D, IDamageable
 
 		Health = MaxHealth;
 		_spawnPosition = GlobalPosition;
+
+		// 快速通关成就的计时起点（每次进关卡都会重来一次）
+		GameState.Instance?.MarkLevelStart();
 		_invincibleTimer = 0f;
 
 		HasNearHit = UnlockAttacksAtStart;

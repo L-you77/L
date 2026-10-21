@@ -1,18 +1,58 @@
 [gd_scene format=3 uid="uid://c5tou4accg727"]
 
-[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="1_p8yet"]
-[ext_resource type="Texture2D" uid="uid://kjosoyj18wkn" path="res://ps/scene/jiaoXue.png" id="2_nkru7"]
-[ext_resource type="Texture2D" uid="uid://dthk1tttvygal" path="res://ps/scene/1.png" id="3_f4nla"]
 [ext_resource type="Texture2D" uid="uid://eep6xrqlijdo" path="res://ps/player/JiaZai/JiaZai100.png" id="4_wk4h4"]
 [ext_resource type="Texture2D" uid="uid://cb2ariysfqsc4" path="res://ps/player/JiaZai/1.png" id="5_mkujn"]
 [ext_resource type="Texture2D" uid="uid://dbubxg2tij4ly" path="res://ps/player/JiaZai/2.png" id="6_ln2pk"]
 [ext_resource type="Texture2D" uid="uid://bljbsojnx3os2" path="res://ps/player/JiaZai/3.png" id="7_ct1t7"]
 [ext_resource type="Texture2D" uid="uid://b8085hcvluop3" path="res://ps/player/JiaZai/4.png" id="8_jre1y"]
 [ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="9_7raok"]
-[ext_resource type="Texture2D" uid="uid://df12o3xy5ax1" path="res://ps/scene/wuXian.png" id="10_f4nla"]
 [ext_resource type="Texture2D" uid="uid://bh04x3dnry4fo" path="res://ps/scene/qiDai.png" id="11_wk4h4"]
 [ext_resource type="Script" uid="uid://br2tp3l8ovk36" path="res://cs/ui/Home2Menu.cs" id="12_home2"]
 [ext_resource type="Texture2D" uid="uid://h1rpvgx2wmac" path="res://ps/coin/coin.png" id="13_mkujn"]
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="1_exit"]
+[ext_resource type="PackedScene" path="res://node/ui/menu_background.tscn" id="bg_scene"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ach_normal"]
+bg_color = Color(1, 1, 1, 0.82)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.18)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ach_pressed"]
+bg_color = Color(0.870588, 0.870588, 0.898039, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ach_hover"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 9
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_logo"]
 animations = [{
@@ -49,14 +89,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("12_home2")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1876745164]
+[node name="Background" parent="." unique_id=1876745164 instance=ExtResource("bg_scene")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.28458384, 0.28461993, 0.33475712, 1)
 
 [node name="Divider" type="ColorRect" parent="." unique_id=2010000005]
 layout_mode = 1
@@ -73,7 +112,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.35)
 
-[node name="ExitButton" type="TextureButton" parent="." unique_id=2010000008]
+[node name="ExitButton" type="Button" parent="." unique_id=2010000008]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -87,11 +126,27 @@ offset_bottom = 290.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("1_p8yet")
-ignore_texture_size = true
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_pressed_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_hover_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_ach_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ach_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ach_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
+
+[node name="Icon" type="TextureRect" parent="ExitButton"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 78.0
+offset_bottom = 78.0
+mouse_filter = 2
+texture = ExtResource("1_exit")
+expand_mode = 1
 stretch_mode = 5
 
-[node name="jiaoXue" type="TextureButton" parent="." unique_id=807876167]
+[node name="jiaoXue" type="Button" parent="." unique_id=807876167]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -100,17 +155,23 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -238.0
 offset_top = -150.0
-offset_right = -82.13623
-offset_bottom = -40.43512
+offset_right = -82.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 rotation = -0.15145795
 focus_mode = 0
-texture_normal = ExtResource("2_nkru7")
-ignore_texture_size = true
-stretch_mode = 5
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_pressed_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_hover_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 44
+theme_override_styles/normal = SubResource("StyleBoxFlat_ach_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ach_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ach_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
+text = "教学"
 
-[node name="zhuXian" type="TextureButton" parent="." unique_id=1414387285]
+[node name="zhuXian" type="Button" parent="." unique_id=1414387285]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -124,34 +185,56 @@ offset_bottom = 190.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("3_f4nla")
-ignore_texture_size = true
-stretch_mode = 5
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_pressed_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_hover_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_ach_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ach_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ach_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
 
 [node name="Logo" type="AnimatedSprite2D" parent="zhuXian" unique_id=2010000003]
-position = Vector2(127, 69)
+position = Vector2(98, 77.00002)
 rotation = 0.28858516
-scale = Vector2(1.0699999, 1.0799999)
+scale = Vector2(0.89854, 0.9545628)
 sprite_frames = SubResource("SpriteFrames_logo")
 animation = &"idle"
 
-[node name="ExitButton2" type="TextureButton" parent="." unique_id=1532559208]
+[node name="Title" type="Label" parent="zhuXian" unique_id=1257838076]
+layout_mode = 0
+offset_top = 132.0
+offset_right = 203.0
+offset_bottom = 184.0
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 30
+text = "主线关卡"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExitButton2" type="Button" parent="." unique_id=1532559208]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 56.0
-offset_top = -155.0
-offset_right = 120.0
-offset_bottom = -93.0
+offset_left = 40.0
+offset_top = -158.0
+offset_right = 190.0
+offset_bottom = -94.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("10_f4nla")
-ignore_texture_size = true
-stretch_mode = 5
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_pressed_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_hover_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_ach_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ach_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ach_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
+text = "无限跑酷"
 
 [node name="QiDai" type="Sprite2D" parent="." unique_id=352727806]
 position = Vector2(706, 464)
@@ -188,3 +271,24 @@ theme_override_font_sizes/font_size = 20
 text = "商城"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="AchievementButton" type="Button" parent="." unique_id=2010000013]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -503.0
+offset_top = 250.0
+offset_right = -391.0
+offset_bottom = 314.0
+grow_horizontal = 0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_pressed_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_hover_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_ach_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ach_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ach_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
+text = "★ 成就"

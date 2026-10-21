@@ -24,11 +24,20 @@ public partial class GameState : Node
 	/// <summary>永久强化变化时发出。</summary>
 	[Signal] public delegate void PermanentChangedEventHandler();
 
+	/// <summary>成就进度变化时发出（通关、带出金币）。</summary>
+	[Signal] public delegate void ProgressChangedEventHandler();
+
 	private const string SavePath = "user://jiantou_save.cfg";
 	private const string SectionPlayer = "player";
 	private const string SectionUpgrades = "upgrades";
 	private const string KeyCoins = "coins";
 	private const string KeyEyeUnlocked = "eye_unlocked";
+	private const string KeyClearCount = "clears";
+	private const string KeyTotalCoins = "total_coins";
+	private const string SectionAchievements = "achievements";
+	private const string KeyClearAll = "clear_all";
+	private const string KeyFastClear = "fast_clear";
+	private const string KeyRunner1000 = "runner_1000";
 
 	private readonly Dictionary<UpgradeEffect, int> _permanent = new();
 
@@ -37,6 +46,24 @@ public partial class GameState : Node
 
 	/// <summary>是否已在商城买到 EYE（静止久了会出现眼睛的那个功能）。</summary>
 	public bool EyeUnlocked { get; private set; }
+
+	/// <summary>累计通关次数（成就用）。</summary>
+	public int ClearCount { get; private set; }
+
+	/// <summary>累计带出的金币（成就用，只增不减，卖东西返还的不算）。</summary>
+	public int TotalCoinsEarned { get; private set; }
+
+	/// <summary>成就：把一张地图上的敌人全部清掉。</summary>
+	public bool AchievementClearAll { get; private set; }
+
+	/// <summary>成就：8 秒内通关。</summary>
+	public bool AchievementFastClear { get; private set; }
+
+	/// <summary>成就：无限跑酷跑到 1000。</summary>
+	public bool AchievementRunner1000 { get; private set; }
+
+	/// <summary>本关开始的时刻（毫秒）。由玩家在 _Ready 里打点。</summary>
+	private ulong _levelStartMsec;
 
 	public override void _Ready()
 	{
@@ -57,9 +84,76 @@ public partial class GameState : Node
 		}
 
 		Coins += amount;
-		GD.Print($"[GameState] 带出 {amount} 枚 coin，总计 {Coins}");
+		TotalCoinsEarned += amount;
+		GD.Print($"[GameState] 带出 {amount} 枚 coin，总计 {Coins}（累计 {TotalCoinsEarned}）");
 		Save();
 		EmitSignal(SignalName.CoinsChanged, Coins);
+		EmitSignal(SignalName.ProgressChanged);
+	}
+
+	// ------------------------------------------------------------------
+	// 成就
+	// ------------------------------------------------------------------
+
+	/// <summary>玩家出生时打点，用来算"这一关用了多久"（快速通关成就）。</summary>
+	public void MarkLevelStart()
+	{
+		_levelStartMsec = Time.GetTicksMsec();
+	}
+
+	/// <summary>本关已经过了多少秒（没打点过就是 0）。</summary>
+	public double LevelElapsedSeconds => _levelStartMsec == 0
+		? 0
+		: (Time.GetTicksMsec() - _levelStartMsec) / 1000.0;
+
+	/// <summary>解锁"清图"成就（敌人全灭时由 EnemyBase 调用）。</summary>
+	public void UnlockClearAllAchievement()
+	{
+		if (AchievementClearAll)
+		{
+			return;
+		}
+
+		AchievementClearAll = true;
+		Save();
+		EmitSignal(SignalName.ProgressChanged);
+		GD.Print("[GameState] 解锁成就：清图");
+	}
+
+	/// <summary>解锁"快速通关"成就（TongGuan 判定用时后调用）。</summary>
+	public void UnlockFastClearAchievement()
+	{
+		if (AchievementFastClear)
+		{
+			return;
+		}
+
+		AchievementFastClear = true;
+		Save();
+		EmitSignal(SignalName.ProgressChanged);
+		GD.Print("[GameState] 解锁成就：快速通关");
+	}
+
+	/// <summary>解锁"酷跑玩家"成就（跑酷跑到 1000 时调用）。</summary>
+	public void UnlockRunnerAchievement()
+	{
+		if (AchievementRunner1000)
+		{
+			return;
+		}
+
+		AchievementRunner1000 = true;
+		Save();
+		EmitSignal(SignalName.ProgressChanged);
+		GD.Print("[GameState] 解锁成就：酷跑玩家");
+	}
+
+	/// <summary>通关一次（成就统计用，由 TongGuan 调用）。</summary>
+	public void RecordClear()
+	{
+		ClearCount++;
+		Save();
+		EmitSignal(SignalName.ProgressChanged);
 	}
 
 	/// <summary>直接加币（卖道具返还等）。</summary>
@@ -244,6 +338,11 @@ public partial class GameState : Node
 		ConfigFile config = new();
 		config.SetValue(SectionPlayer, KeyCoins, Coins);
 		config.SetValue(SectionPlayer, KeyEyeUnlocked, EyeUnlocked);
+		config.SetValue(SectionPlayer, KeyClearCount, ClearCount);
+		config.SetValue(SectionPlayer, KeyTotalCoins, TotalCoinsEarned);
+		config.SetValue(SectionAchievements, KeyClearAll, AchievementClearAll);
+		config.SetValue(SectionAchievements, KeyFastClear, AchievementFastClear);
+		config.SetValue(SectionAchievements, KeyRunner1000, AchievementRunner1000);
 
 		foreach (UpgradeEffect effect in Enum.GetValues<UpgradeEffect>())
 		{
@@ -267,6 +366,11 @@ public partial class GameState : Node
 
 		Coins = config.GetValue(SectionPlayer, KeyCoins, 0).AsInt32();
 		EyeUnlocked = config.GetValue(SectionPlayer, KeyEyeUnlocked, false).AsBool();
+		ClearCount = config.GetValue(SectionPlayer, KeyClearCount, 0).AsInt32();
+		TotalCoinsEarned = config.GetValue(SectionPlayer, KeyTotalCoins, 0).AsInt32();
+		AchievementClearAll = config.GetValue(SectionAchievements, KeyClearAll, false).AsBool();
+		AchievementFastClear = config.GetValue(SectionAchievements, KeyFastClear, false).AsBool();
+		AchievementRunner1000 = config.GetValue(SectionAchievements, KeyRunner1000, false).AsBool();
 
 		foreach (UpgradeEffect effect in Enum.GetValues<UpgradeEffect>())
 		{

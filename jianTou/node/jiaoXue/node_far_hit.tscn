@@ -50,6 +50,7 @@ LogClick = true
 position = Vector2(58, 137)
 
 [node name="TutorialUi" parent="." unique_id=458810745 instance=ExtResource("6_qi2gy")]
+TitleText = "教学 · 远程"
 
 [node name="enemyFar" parent="." unique_id=1147255065 instance=ExtResource("7_7nwd8")]
 position = Vector2(177, 136)

@@ -36,6 +36,15 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	/// <summary>死亡闪红的停留时长，闪完就销毁。设 0 表示立刻销毁（看不到红）。</summary>
 	[Export] public float DeathFlashTime = 0.08f;
 
+	/// <summary>
+	/// 是否参与"清图"成就的统计。
+	/// 无限跑酷里的敌人是源源不断刷出来的，把它关掉，否则杀一只就会误判成"全清"。
+	/// </summary>
+	[Export] public bool CountsForClearAll = true;
+
+	/// <summary>"还活着的敌人"分组（清图判定用）。</summary>
+	public const string AliveGroup = "enemy_alive";
+
 	/// <summary>闪红结束后是否把节点删掉（留开关给以后可能需要留尸体的场合）。</summary>
 	[Export] public bool QueueFreeOnDeath = true;
 
@@ -75,6 +84,7 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 		}
 
 		ApplyCollisionLayers();
+		AddToGroup(AliveGroup);
 
 		if (Hurt != null)
 		{
@@ -233,6 +243,13 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 		if (CoinReward > 0 && GetTree().GetFirstNodeInGroup(Player.GroupName) is Player killer)
 		{
 			killer.AddCoin(CoinReward);
+		}
+
+		// 清图成就：自己退出"活着"分组后，如果场上一个活敌人都没有了，就算清图
+		RemoveFromGroup(AliveGroup);
+		if (CountsForClearAll && GetTree().GetNodesInGroup(AliveGroup).Count == 0)
+		{
+			GameState.Instance?.UnlockClearAllAchievement();
 		}
 
 		EmitSignal(SignalName.Died);

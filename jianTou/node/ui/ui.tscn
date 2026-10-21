@@ -42,6 +42,18 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.0431373, 0.0392157, 0.0470588, 0.5)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.14)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [node name="ui" type="Control" unique_id=1124258303]
 process_mode = 3
 layout_mode = 3
@@ -63,48 +75,64 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("11_hp")
 
+[node name="HudPanel" type="Panel" parent="HealthIcon" unique_id=1837421699]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 4.0
+offset_right = 512.0
+offset_bottom = 78.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="HealthIcon" unique_id=1158694042]
-position = Vector2(119, 30)
-scale = Vector2(0.4350003, 0.42)
+position = Vector2(128, 40)
+scale = Vector2(0.36, 0.36)
 sprite_frames = SubResource("SpriteFrames_etsle")
 animation = &"idle"
 
 [node name="Warn" type="Sprite2D" parent="HealthIcon" unique_id=1837421691]
-position = Vector2(119, 29)
-scale = Vector2(0.35499993, 0.35999998)
+position = Vector2(128, 40)
+scale = Vector2(0.32, 0.32)
 texture = ExtResource("13_warn")
 
 [node name="HealthLabel" type="Label" parent="HealthIcon" unique_id=1837421692]
 layout_mode = 0
-offset_left = 152.0
-offset_right = 280.0
-offset_bottom = 61.0
+offset_left = 160.0
+offset_top = 12.0
+offset_right = 272.0
+offset_bottom = 60.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 44
+theme_override_font_sizes/font_size = 36
 text = "3"
 vertical_alignment = 1
 
+
+
 [node name="CoinLabel" type="Label" parent="HealthIcon" unique_id=555414317]
 layout_mode = 0
-offset_left = 344.0
-offset_top = 8.0
-offset_right = 540.0
-offset_bottom = 56.0
+offset_left = 372.0
+offset_top = 14.0
+offset_right = 500.0
+offset_bottom = 66.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 34
+theme_override_font_sizes/font_size = 32
 text = "0"
 vertical_alignment = 1
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1837421650]
 layout_mode = 1
-offset_left = 33.0
-offset_top = 7.0
-offset_right = 81.0
-offset_bottom = 55.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -92.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 92.0
+grow_horizontal = 0
 texture_normal = ExtResource("2_zt")
 ignore_texture_size = true
 stretch_mode = 5
@@ -380,7 +408,7 @@ text = "重来"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Coin" type="Sprite2D" parent="." unique_id=1982665673]
-position = Vector2(312, 27)
-scale = Vector2(0.4999997, 0.5)
+[node name="Coin" type="Sprite2D" parent="HealthIcon" unique_id=1982665673]
+position = Vector2(350, 40)
+scale = Vector2(0.34, 0.34)
 texture = ExtResource("15_24msh")

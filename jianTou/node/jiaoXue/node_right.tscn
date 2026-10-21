@@ -46,6 +46,7 @@ texture = ExtResource("5_ljpfj")
 position = Vector2(95, 127)
 
 [node name="TutorialUi" parent="." unique_id=758078642 instance=ExtResource("9_ui")]
+TitleText = "教学 · 向右"
 
 [node name="tongGuan" parent="." unique_id=527072986 instance=ExtResource("7_h7t6t")]
 position = Vector2(187, 129)

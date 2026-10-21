@@ -55,12 +55,14 @@ shape = SubResource("RectangleShape2D_coinw")
 [node name="tongGuan" parent="." unique_id=527467700 instance=ExtResource("4_quii3")]
 position = Vector2(353, 257)
 BackScenePath = "res://node/scene/home_zhuxian.tscn"
+ClearSubtitle = "隐藏区"
 
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="ui" parent="UI" instance=ExtResource("7_uitot")]
 
 [node name="TutorialUi" parent="." instance=ExtResource("8_tuitot")]
+TitleText = "隐藏区"
 ExitScenePath = "res://node/scene/home_zhuxian.tscn"
 EnablePauseButton = false
 ShowAllButtonsOnStart = true

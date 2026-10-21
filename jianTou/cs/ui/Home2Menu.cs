@@ -6,6 +6,7 @@ using Godot;
 ///   · jiaoXue  → 教学选关（home_jiaoxue）
 ///   · zhuXian  → 主线选关（home_zhuxian），再从那进具体关卡
 ///   · ShopButton → 商城
+///   · AchievementButton → 成就
 ///   · 无限（ExitButton2）→ 无限跑酷 <see cref="InfiniteScenePath"/>（node_wuxian）
 ///   · 退出（ExitButton）→ **返回上一场景**（第一层主页 home），不是关游戏
 /// </summary>
@@ -19,6 +20,9 @@ public partial class Home2Menu : Control
 
 	/// <summary>右上角商城。</summary>
 	[Export] public string ShopScenePath = ScenePaths.Shop;
+
+	/// <summary>右上角成就。</summary>
+	[Export] public string AchievementScenePath = ScenePaths.Achievement;
 
 	/// <summary>无限模式场景（暂时指向主线，做了再单独建场景）。</summary>
 	[Export] public string InfiniteScenePath = ScenePaths.Infinite;
@@ -37,6 +41,7 @@ public partial class Home2Menu : Control
 		Bind("zhuXian", () => Go(MainSelectScenePath));
 		Bind("ExitButton2", () => Go(InfiniteScenePath));
 		Bind("ShopButton", () => Go(ShopScenePath));
+		Bind("AchievementButton", () => Go(AchievementScenePath));
 		Bind("ExitButton", () => Go(BackScenePath));
 
 		if (GetNodeOrNull<AnimatedSprite2D>("zhuXian/Logo") is AnimatedSprite2D logo

@@ -27,6 +27,9 @@ public partial class TongGuan : Area2D
 	/// <summary>点"返回"去哪（默认回教学选关）。</summary>
 	[Export] public string BackScenePath = ScenePaths.TutorialSelect;
 
+	/// <summary>多少秒内通关算"快速通关"（成就用）。</summary>
+	[Export] public float FastClearSeconds = 8f;
+
 	/// <summary>通关后是否把通关点本身藏起来。</summary>
 	[Export] public bool HideAfterClear = true;
 
@@ -71,10 +74,19 @@ public partial class TongGuan : Area2D
 		// 只有通关才把这一关捡到的 coin 带出去
 		BankCoins(player);
 
+		// 成就统计：累计通关次数 + 用时
+		double elapsed = GameState.Instance?.LevelElapsedSeconds ?? 0;
+		GameState.Instance?.RecordClear();
+
+		if (elapsed > 0 && elapsed <= FastClearSeconds)
+		{
+			GameState.Instance?.UnlockFastClearAchievement();
+		}
+
 		EmitSignal(SignalName.Cleared);
 		GD.Print($"[TongGuan] 通关（下一关：{(string.IsNullOrEmpty(NextScenePath) ? "无" : NextScenePath)}）");
 
-		ShowClearPanel();
+		ShowClearPanel(player.Coins);
 
 		if (HideAfterClear)
 		{
@@ -94,7 +106,7 @@ public partial class TongGuan : Area2D
 	}
 
 	/// <summary>弹出通关界面并暂停游戏。</summary>
-	private void ShowClearPanel()
+	private void ShowClearPanel(int coins)
 	{
 		PackedScene scene = ResourceLoader.Load<PackedScene>(ClearPanelScenePath);
 		if (scene == null)
@@ -118,6 +130,6 @@ public partial class TongGuan : Area2D
 		}
 
 		parent.AddChild(panel);
-		panel.ShowClear(ClearTitle, ClearSubtitle, NextScenePath, BackScenePath);
+		panel.ShowClear(ClearTitle, ClearSubtitle, NextScenePath, BackScenePath, coins);
 	}
 }

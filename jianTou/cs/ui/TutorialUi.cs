@@ -40,11 +40,21 @@ public partial class TutorialUi : CanvasLayer
 	/// </summary>
 	[Export] public int UiLayer = 5;
 
+	/// <summary>进关时在屏幕上方显示的关卡名（留空 = 不显示）。比如"第二关 · 升降井"。</summary>
+	[Export] public string TitleText = "";
+
+	/// <summary>关卡名停留多久开始淡出（秒）。</summary>
+	[Export] public float TitleHoldTime = 1.8f;
+
+	/// <summary>关卡名淡出时长（秒）。</summary>
+	[Export] public float TitleFadeTime = 0.7f;
+
 	private Control _pausePanel;
 	private Control _touchLayer;
 	private TextureButton _pauseButton;
 	private Label _hint;
 	private Label _upgradeLabel;
+	private Label _titleLabel;
 	private Player _player;
 	private bool _paused;
 
@@ -58,6 +68,7 @@ public partial class TutorialUi : CanvasLayer
 		_pauseButton = GetNodeOrNull<TextureButton>("Root/PauseButton");
 		_hint = GetNodeOrNull<Label>("Root/Hint");
 		_upgradeLabel = GetNodeOrNull<Label>("Root/UpgradeLabel");
+		_titleLabel = GetNodeOrNull<Label>("Root/TitleLabel");
 		BindPlayer();
 
 		Bind("Root/PauseButton", () => SetPaused(true));
@@ -82,7 +93,27 @@ public partial class TutorialUi : CanvasLayer
 			ShowAllButtons();
 		}
 
+		ShowTitle(TitleText);
+
 		SetPaused(false);
+	}
+
+	/// <summary>关卡名：淡入显示一会儿再淡出，不挡操作。</summary>
+	public void ShowTitle(string text)
+	{
+		if (_titleLabel == null || string.IsNullOrEmpty(text))
+		{
+			return;
+		}
+
+		_titleLabel.Text = text;
+		_titleLabel.Visible = true;
+		_titleLabel.Modulate = new Color(1f, 1f, 1f, 1f);
+
+		Tween tween = CreateTween();
+		tween.TweenInterval(TitleHoldTime);
+		tween.TweenProperty(_titleLabel, "modulate:a", 0f, TitleFadeTime);
+		tween.TweenCallback(Callable.From(() => _titleLabel.Visible = false));
 	}
 
 	/// <summary>订阅玩家的"可强化次数"，右上角显示还剩几次可以点自己升级。</summary>

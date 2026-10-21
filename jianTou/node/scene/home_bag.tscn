@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://cs/ui/HomeBagMenu.cs" id="1_bag"]
 [ext_resource type="Texture2D" uid="uid://h1rpvgx2wmac" path="res://ps/coin/coin.png" id="2_coin"]
 [ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="3_exit"]
+[ext_resource type="Theme" path="res://ps/ui/card_button_theme.tres" id="t_card"]
+[ext_resource type="PackedScene" path="res://node/ui/menu_background.tscn" id="bg_scene"]
 
 [node name="HomeBag" type="Control" unique_id=2040000001]
 layout_mode = 3
@@ -13,14 +15,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_bag")
 
-[node name="Background" type="ColorRect" parent="." unique_id=2040000002]
+[node name="Background" parent="." unique_id=2040000002 instance=ExtResource("bg_scene")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.8685335, 0.8684866, 0.90358883, 1)
 
 [node name="Title" type="Label" parent="." unique_id=2040000003]
 layout_mode = 1
@@ -149,10 +150,11 @@ offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
+theme = ExtResource("t_card")
 theme_override_font_sizes/font_size = 18
 text = "全部卖出"
 
-[node name="ExitButton" type="TextureButton" parent="." unique_id=2040000011]
+[node name="ExitButton" type="Button" parent="." unique_id=2040000011]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -166,8 +168,17 @@ offset_bottom = 290.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("3_exit")
-ignore_texture_size = true
+theme = ExtResource("t_card")
+
+[node name="Icon" type="TextureRect" parent="ExitButton"]
+layout_mode = 0
+offset_left = 18
+offset_top = 18
+offset_right = 78
+offset_bottom = 78
+mouse_filter = 2
+texture = ExtResource("3_exit")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="ExitLabel" type="Label" parent="." unique_id=2040000012]

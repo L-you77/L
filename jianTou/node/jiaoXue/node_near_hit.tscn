@@ -52,4 +52,5 @@ position = Vector2(172, 136)
 position = Vector2(58, 138)
 
 [node name="TutorialUi" parent="." unique_id=688704324 instance=ExtResource("9_ui")]
+TitleText = "教学 · 近战"
 

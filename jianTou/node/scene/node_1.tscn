@@ -164,6 +164,7 @@ StartOnUse = PackedStringArray("MovingPlatform4")
 position = Vector2(19, 297)
 NextScenePath = "res://node/scene/node_1_2.tscn"
 BackScenePath = "res://node/scene/home_zhuxian.tscn"
+ClearSubtitle = "第一关 · 机关"
 
 [node name="B2" type="Sprite2D" parent="." unique_id=71543210]
 position = Vector2(212, 358)
@@ -230,6 +231,7 @@ position = Vector2(330, 237)
 position = Vector2(563, 237)
 
 [node name="TutorialUi" parent="." unique_id=1831208032 instance=ExtResource("14_tui")]
+TitleText = "第一关 · 机关"
 ExitScenePath = "res://node/scene/home_zhuxian.tscn"
 EnablePauseButton = false
 

@@ -38,6 +38,13 @@ public partial class EndlessRunner : Node2D
 	[Export] public string EnemyScenePath = "res://node/enemy/enemy.tscn";
 	[Export] public string CoinScenePath = "res://node/organ/coin.tscn";
 	[Export] public string CoinSpeScenePath = "res://node/organ/coin_spe.tscn";
+	[Export] public string CoinWScenePath = "res://node/organ/coin_w.tscn";
+
+	/// <summary>每块地形出现 CoinW（挨打掉币的罐子）的概率。</summary>
+	[Export] public float CoinWChance = 0.14f;
+
+	/// <summary>跑到多少距离解锁"酷跑玩家"成就（HUD 里的距离数值）。</summary>
+	[Export] public int RunnerGoalDistance = 1000;
 	[Export] public string UpgradePanelScenePath = "res://node/ui/upgrade_panel.tscn";
 
 	/// <summary>每块地形出现强化点的概率。</summary>
@@ -91,6 +98,7 @@ public partial class EndlessRunner : Node2D
 	private PackedScene _enemyScene;
 	private PackedScene _coinScene;
 	private PackedScene _coinSpeScene;
+	private PackedScene _coinWScene;
 	private Label _healthLabel;
 	private UpgradePanel _upgradePanel;
 	private Texture2D _barTexture;
@@ -174,6 +182,11 @@ public partial class EndlessRunner : Node2D
 
 		Distance = Mathf.Max(0, Mathf.FloorToInt((px - _startX) / 8f));
 		UpdateDistanceLabel();
+
+		if (Distance >= RunnerGoalDistance)
+		{
+			GameState.Instance?.UnlockRunnerAchievement();
+		}
 	}
 
 	// ------------------------------------------------------------------
@@ -282,6 +295,12 @@ public partial class EndlessRunner : Node2D
 		{
 			SpawnCoinSpe(chunk, new Vector2(left + _rng.RandfRange(12f, 52f), ground - 14f));
 		}
+
+		// CoinW：打它一下有概率掉币（不吃伤害、也不会伤人）
+		if (_rng.Randf() < CoinWChance)
+		{
+			SpawnCoinW(chunk, new Vector2(left + _rng.RandfRange(14f, 50f), ground - 14f));
+		}
 	}
 
 	private void SpawnSpike(Chunk chunk, Vector2 position)
@@ -293,7 +312,12 @@ public partial class EndlessRunner : Node2D
 	private void SpawnEnemy(Chunk chunk, Vector2 position)
 	{
 		_enemyScene ??= ResourceLoader.Load<PackedScene>(EnemyScenePath);
-		Attach(chunk, _enemyScene, position);
+
+		// 跑酷的敌人是无限刷的，不参与"清图"成就，否则杀一只就会被判成清图
+		if (Attach(chunk, _enemyScene, position) is EnemyBase enemy)
+		{
+			enemy.CountsForClearAll = false;
+		}
 	}
 
 	private void SpawnCoin(Chunk chunk, Vector2 position)
@@ -308,18 +332,24 @@ public partial class EndlessRunner : Node2D
 		Attach(chunk, _coinSpeScene, position);
 	}
 
-	private void Attach(Chunk chunk, PackedScene scene, Vector2 position)
+	private void SpawnCoinW(Chunk chunk, Vector2 position)
+	{
+		_coinWScene ??= ResourceLoader.Load<PackedScene>(CoinWScenePath);
+		Attach(chunk, _coinWScene, position);
+	}
+
+	private Node2D Attach(Chunk chunk, PackedScene scene, Vector2 position)
 	{
 		if (scene == null)
 		{
-			return;
+			return null;
 		}
 
 		Node node = scene.Instantiate();
 		if (node is not Node2D node2D)
 		{
 			node.QueueFree();
-			return;
+			return null;
 		}
 
 		// 先把坐标摆好再入树：Coin._Ready 会把自己的 Position 记成浮动基准点，
@@ -327,6 +357,8 @@ public partial class EndlessRunner : Node2D
 		node2D.Position = position;
 		AddChild(node2D);
 		chunk.Nodes.Add(node2D);
+
+		return node2D;
 	}
 
 	/// <summary>矮杆：站着会撞到，蹲下（判定高度减半）能钻过去。</summary>

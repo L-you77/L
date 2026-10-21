@@ -11,6 +11,9 @@ public static class ScenePaths
 	/// <summary>第二层主页：教学 / 主线。</summary>
 	public const string Home2 = "res://node/scene/home_2.tscn";
 
+	/// <summary>成就界面。</summary>
+	public const string Achievement = "res://node/scene/home_achievement.tscn";
+
 	/// <summary>商城。</summary>
 	public const string Shop = "res://node/scene/home_shop.tscn";
 

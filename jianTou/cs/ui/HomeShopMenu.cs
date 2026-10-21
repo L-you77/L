@@ -33,9 +33,9 @@ public partial class HomeShopMenu : Control
 	[Export] public string SoldOutText = "售空了";
 
 	private Label _coinLabel;
-	private TextureButton _buyButton;
+	private BaseButton _buyButton;
 	private Label _buyLabel;
-	private TextureButton _eyeButton;
+	private BaseButton _eyeButton;
 	private Label _eyeLabel;
 	private Sprite2D _eyeCoinIcon;
 	private UpgradePanel _panel;
@@ -49,9 +49,9 @@ public partial class HomeShopMenu : Control
 		GetTree().Paused = false;
 
 		_coinLabel = GetNodeOrNull<Label>("CoinLabel");
-		_buyButton = GetNodeOrNull<TextureButton>("BuyButton");
+		_buyButton = GetNodeOrNull<BaseButton>("BuyButton");
 		_buyLabel = GetNodeOrNull<Label>("BuyLabel");
-		_eyeButton = GetNodeOrNull<TextureButton>("EyeButton");
+		_eyeButton = GetNodeOrNull<BaseButton>("EyeButton");
 		_eyeLabel = GetNodeOrNull<Label>("EyeLabel");
 		_eyeCoinIcon = GetNodeOrNull<Sprite2D>("EyeLabel/Coin");
 

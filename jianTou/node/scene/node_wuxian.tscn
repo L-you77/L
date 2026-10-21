@@ -40,6 +40,7 @@ LimitCameraToTileMap = false
 FallDeathY = 40.0
 
 [node name="TutorialUi" parent="." unique_id=1344569570 instance=ExtResource("4_tui")]
+TitleText = "无限跑酷"
 ExitScenePath = "res://node/scene/home_2.tscn"
 UiLayer = 9
 EnablePauseButton = true

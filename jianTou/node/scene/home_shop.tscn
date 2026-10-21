@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://b8085hcvluop3" path="res://ps/player/JiaZai/4.png" id="8_0ayqt"]
 [ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="9_04uus"]
 [ext_resource type="Texture2D" uid="uid://buewd2axtncto" path="res://ps/player/eye.png" id="10_eye"]
+[ext_resource type="Theme" path="res://ps/ui/card_button_theme.tres" id="t_card"]
+[ext_resource type="PackedScene" path="res://node/ui/menu_background.tscn" id="bg_scene"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_bul85"]
 animations = [{
@@ -37,30 +39,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag_normal"]
-bg_color = Color(0.960784, 0.952941, 0.933333, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag_hover"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
 [node name="HomeShop" type="Control" unique_id=2030000001]
 layout_mode = 3
 anchors_preset = 15
@@ -70,14 +48,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_shop")
 
-[node name="Background" type="ColorRect" parent="." unique_id=2030000002]
+[node name="Background" parent="." unique_id=2030000002 instance=ExtResource("bg_scene")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.8685335, 0.8684866, 0.90358883, 1)
 
 [node name="Title" type="Label" parent="." unique_id=2030000003]
 layout_mode = 1
@@ -134,7 +111,7 @@ theme_override_font_sizes/font_size = 30
 text = "0"
 vertical_alignment = 1
 
-[node name="BuyButton" type="TextureButton" parent="." unique_id=2030000007]
+[node name="BuyButton" type="Button" parent="." unique_id=2030000007]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -147,8 +124,7 @@ offset_bottom = 96.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-ignore_texture_size = true
-stretch_mode = 5
+theme = ExtResource("t_card")
 
 [node name="Logo" type="AnimatedSprite2D" parent="BuyButton" unique_id=1658631445]
 position = Vector2(47.74999, 48.000004)
@@ -181,7 +157,7 @@ position = Vector2(125.999985, 13.999991)
 scale = Vector2(0.20249996, 0.19499983)
 texture = ExtResource("4_coin")
 
-[node name="EyeButton" type="TextureButton" parent="." unique_id=2030000012]
+[node name="EyeButton" type="Button" parent="." unique_id=2030000012]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -194,8 +170,17 @@ offset_bottom = 96.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("10_eye")
-ignore_texture_size = true
+theme = ExtResource("t_card")
+
+[node name="Icon" type="TextureRect" parent="EyeButton"]
+layout_mode = 0
+offset_left = 16
+offset_top = 16
+offset_right = 80
+offset_bottom = 80
+mouse_filter = 2
+texture = ExtResource("10_eye")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="EyeLabel" type="Label" parent="." unique_id=2030000013]
@@ -256,34 +241,12 @@ offset_bottom = 257.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
+theme = ExtResource("t_card")
 theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
 theme_override_font_sizes/font_size = 26
-theme_override_styles/normal = SubResource("StyleBoxFlat_bag_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_bag_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_bag_hover")
-theme_override_styles/focus = SubResource("StyleBoxFlat_bag_hover")
 text = "背包"
 
-[node name="BagLabel" type="Label" parent="." unique_id=2030000016]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 236.0
-offset_top = 102.0
-offset_right = 346.0
-offset_bottom = 130.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
-theme_override_font_sizes/font_size = 16
-text = "看看买到了什么"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ExitButton" type="TextureButton" parent="." unique_id=2030000010]
+[node name="ExitButton" type="Button" parent="." unique_id=2030000010]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -297,25 +260,15 @@ offset_bottom = 290.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("3_exit")
-ignore_texture_size = true
-stretch_mode = 5
+theme = ExtResource("t_card")
 
-[node name="ExitLabel" type="Label" parent="." unique_id=2030000011]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 440.0
-offset_top = 296.0
-offset_right = 536.0
-offset_bottom = 322.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
-theme_override_font_sizes/font_size = 18
-text = "返回"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="Icon" type="TextureRect" parent="ExitButton"]
+layout_mode = 0
+offset_left = 18
+offset_top = 18
+offset_right = 78
+offset_bottom = 78
+mouse_filter = 2
+texture = ExtResource("3_exit")
+expand_mode = 1
+stretch_mode = 5

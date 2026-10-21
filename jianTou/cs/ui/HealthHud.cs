@@ -93,6 +93,7 @@ public partial class HealthHud : Control
 			_label.Text = health.ToString();
 		}
 
+
 		// > 1：图标 + 数字；== 1：warn 顶替图标；== 0：全收起（死亡面板接管）
 		if (_icon != null)
 		{

@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://cy2porc5054ta" path="res://ps/player/JiaZai/5.png" id="7_logo5"]
 [ext_resource type="Texture2D" uid="uid://dxbm3ym5nplxw" path="res://ps/ui/jiXu.png" id="8_start"]
 [ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="9_exit"]
+[ext_resource type="Theme" path="res://ps/ui/card_button_theme.tres" id="t_card"]
+[ext_resource type="PackedScene" path="res://node/ui/menu_background.tscn" id="bg_scene"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_logo"]
 animations = [{
@@ -46,14 +48,14 @@ grow_vertical = 2
 script = ExtResource("1_home")
 GameScenePath = "res://node/scene/home_2.tscn"
 
-[node name="Background" type="ColorRect" parent="." unique_id=2010000002]
+[node name="Background" parent="." unique_id=2010000002 instance=ExtResource("bg_scene")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.174885, 0.17489481, 0.21279415, 1)
+Dark = true
 
 [node name="Logo" type="AnimatedSprite2D" parent="." unique_id=2010000003]
 position = Vector2(576, 136)
@@ -107,7 +109,7 @@ text = "don't stand still"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="StartButton" type="TextureButton" parent="." unique_id=2010000007]
+[node name="StartButton" type="Button" parent="." unique_id=2010000007]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -121,11 +123,20 @@ offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("8_start")
-ignore_texture_size = true
+theme = ExtResource("t_card")
+
+[node name="Icon" type="TextureRect" parent="StartButton"]
+layout_mode = 0
+offset_left = 18
+offset_top = 18
+offset_right = 78
+offset_bottom = 78
+mouse_filter = 2
+texture = ExtResource("8_start")
+expand_mode = 1
 stretch_mode = 5
 
-[node name="ExitButton" type="TextureButton" parent="." unique_id=2010000008]
+[node name="ExitButton" type="Button" parent="." unique_id=2010000008]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -139,8 +150,17 @@ offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-texture_normal = ExtResource("9_exit")
-ignore_texture_size = true
+theme = ExtResource("t_card")
+
+[node name="Icon" type="TextureRect" parent="ExitButton"]
+layout_mode = 0
+offset_left = 18
+offset_top = 18
+offset_right = 78
+offset_bottom = 78
+mouse_filter = 2
+texture = ExtResource("9_exit")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="StartLabel" type="Label" parent="." unique_id=2010000009]
