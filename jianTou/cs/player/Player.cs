@@ -90,8 +90,11 @@ public partial class Player : CharacterBody2D, IDamageable
 	/// <summary>远程冷却（秒）。</summary>
 	[Export] public float FarHitCooldown = 5f;
 
-	/// <summary>弹体飞行速度（像素/秒）。</summary>
-	[Export] public float FarHitSpeed = 60f;
+	/// <summary>
+	/// 弹体速度 = 玩家当前水平移动速度 × 这个倍率。
+	/// 1.5 表示"子弹比角色快 50%"（默认值），改它就能统一调整手感。
+	/// </summary>
+	[Export] public float FarHitSpeedFactor = 1.5f;
 
 	/// <summary>弹体伤害。</summary>
 	[Export] public int FarHitDamage = 1;
@@ -129,6 +132,26 @@ public partial class Player : CharacterBody2D, IDamageable
 	[Export] public float LadderJumpLockTime = 0.3f;
 
 	[Export] public float LadderClimbSpeed = 40f;
+
+	[ExportGroup("跑酷（无限模式）")]
+
+	/// <summary>自动向右跑（无限模式用，不需要按方向键）。</summary>
+	[Export] public bool AutoRun = false;
+
+	/// <summary>允许按 ↓ 蹲下（身体判定高度减半）。其它模式关掉，免得和梯子抢 ↓。</summary>
+	[Export] public bool EnableCrouch = false;
+
+	/// <summary>蹲下时身体判定高度相对站立的比例。</summary>
+	[Export] public float CrouchHeightScale = 0.5f;
+
+	/// <summary>按 ↓ 时往下瞬移一小段（跑酷用）。</summary>
+	[Export] public bool EnableDownTeleport = false;
+
+	/// <summary>瞬移距离（像素）。</summary>
+	[Export] public float DownTeleportDistance = 24f;
+
+	/// <summary>瞬移冷却（秒）。</summary>
+	[Export] public float DownTeleportCooldown = 0.35f;
 
 	[ExportGroup("相机")]
 	/// <summary>镜头是否限制在关卡 TileMapLayer 范围内（视野不会露出地图外面）。</summary>
@@ -227,6 +250,14 @@ public partial class Player : CharacterBody2D, IDamageable
 
 	private AnimatedSprite2D _sprite;
 	private CollisionShape2D _bodyShape;
+
+	// 蹲下：站立/蹲下两套形状来回换（不直接改共享资源，先 Duplicate 一份）
+	private RectangleShape2D _standShape;
+	private RectangleShape2D _crouchShape;
+	private Vector2 _standShapePos;
+	private Vector2 _spriteBaseScale = Vector2.One;
+	private bool _crouching;
+	private float _downTeleportCd;
 	private HurtBox _hurtBox;
 	private HitBox _stompBox;
 
@@ -274,6 +305,7 @@ public partial class Player : CharacterBody2D, IDamageable
 		_stompBox = GetNodeOrNull<HitBox>("HitBox");
 
 		ApplyCollisionLayers();
+		PrepareCrouch();
 		AddToGroup(GroupName);
 
 		Health = MaxHealth;
@@ -364,6 +396,74 @@ public partial class Player : CharacterBody2D, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// 按 ↓：向下瞬移 <see cref="DownTeleportDistance"/> 像素（跑酷模式）。
+	/// 用 TestMove 先探一下，下面有地面/平台就不瞬移 —— 所以站在地上按 ↓ 只会蹲下，不会掉进地里。
+	/// </summary>
+	private void TryDownTeleport(float dt)
+	{
+		_downTeleportCd = Mathf.Max(0f, _downTeleportCd - dt);
+
+		if (!EnableDownTeleport || _downTeleportCd > 0f || !Input.IsActionJustPressed("Down"))
+		{
+			return;
+		}
+
+		Vector2 motion = new(0f, DownTeleportDistance);
+		if (TestMove(GlobalTransform, motion))
+		{
+			return;
+		}
+
+		GlobalPosition += motion;
+		_downTeleportCd = DownTeleportCooldown;
+		GD.Print("[Player] 向下瞬移");
+	}
+
+	/// <summary>蹲下用：按 <see cref="CrouchHeightScale"/> 复制一份矮一点的形状（不动原资源）。</summary>
+	private void PrepareCrouch()
+	{
+		if (!EnableCrouch || _bodyShape?.Shape is not RectangleShape2D stand)
+		{
+			return;
+		}
+
+		_standShape = stand;
+		_standShapePos = _bodyShape.Position;
+		_spriteBaseScale = _sprite?.Scale ?? Vector2.One;
+
+		_crouchShape = (RectangleShape2D)stand.Duplicate();
+		_crouchShape.Size = new Vector2(stand.Size.X, Mathf.Max(1f, stand.Size.Y * CrouchHeightScale));
+	}
+
+	/// <summary>按住 ↓ 且站在地面上时蹲下：判定盒从顶部压矮，脚底位置不变。</summary>
+	private void UpdateCrouch(bool canCrouch)
+	{
+		if (_crouchShape == null || _bodyShape == null)
+		{
+			return;
+		}
+
+		bool want = canCrouch && Input.IsActionPressed("Down");
+		if (want == _crouching)
+		{
+			return;
+		}
+
+		_crouching = want;
+
+		_bodyShape.Shape = want ? _crouchShape : _standShape;
+
+		// 形状是从中心缩的，往下挪半个高度差，脚底才不会浮起来
+		float drop = (_standShape.Size.Y - _crouchShape.Size.Y) * 0.5f;
+		_bodyShape.Position = _standShapePos + new Vector2(0f, want ? drop : 0f);
+
+		if (_sprite != null)
+		{
+			_sprite.Scale = want ? new Vector2(_spriteBaseScale.X, _spriteBaseScale.Y * 0.6f) : _spriteBaseScale;
+		}
+	}
+
 	public override void _PhysicsProcess(double delta)
 	{
 		float dt = (float)delta;
@@ -420,7 +520,7 @@ public partial class Player : CharacterBody2D, IDamageable
 		Vector2 velocity = Velocity;
 		bool onFloor = IsOnFloor();
 
-		float inputX = Input.GetAxis("Left", "Right");
+		float inputX = AutoRun ? 1f : Input.GetAxis("Left", "Right");
 
 		// 朝向：按输入方向立刻翻转，站着不动时保留上一次朝向（攻击要靠它决定往哪打）
 		if (inputX > 0.01f)
@@ -467,6 +567,9 @@ public partial class Player : CharacterBody2D, IDamageable
 		{
 			velocity.Y = Mathf.Min(velocity.Y + Gravity * dt, MaxFallSpeed);
 		}
+
+		// --- 蹲下（跑酷模式）：身体判定高度减半，用来钻过矮杆 ---
+		UpdateCrouch(onFloor && !onLadder);
 
 		// --- 落地 / 在梯子上：把空中跳补满 ---
 		if (onFloor || onLadder)
@@ -537,6 +640,9 @@ public partial class Player : CharacterBody2D, IDamageable
 		{
 			_jumpNotCut = false;
 		}
+
+		// --- 按 ↓ 往下瞬移（跑酷模式） ---
+		TryDownTeleport(dt);
 
 		Velocity = velocity;
 		MoveAndSlide();
@@ -760,7 +866,12 @@ public partial class Player : CharacterBody2D, IDamageable
 
 		// 这些要在 AddChild（触发 _Ready）之前设好
 		bullet.Direction = _facing;
-		bullet.Speed = FarHitSpeed;
+
+		// 弹速跟着角色走：角色当前朝这个方向的最大移动速度 × 倍率（默认比角色快 50%）。
+		// 用 Mathf.Max 是为了让"刚起步还没加速到满速"时子弹也不会慢得离谱。
+		float moveSpeed = MoveSpeed * (_facing > 0 ? RightSpeedMultiplier : LeftSpeedMultiplier);
+		bullet.Speed = Mathf.Max(moveSpeed, Mathf.Abs(Velocity.X)) * FarHitSpeedFactor;
+
 		bullet.Damage = FarHitDamage;
 
 		// 挂到关卡上，别挂成玩家的子节点，否则弹体会跟着玩家跑

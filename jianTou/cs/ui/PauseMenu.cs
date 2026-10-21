@@ -49,15 +49,50 @@ public partial class PauseMenu : Control
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		if (@event.IsActionPressed("ui_cancel"))
+		if (!@event.IsActionPressed("ui_cancel"))
 		{
-			SetPaused(!GetTree().Paused);
-			GetViewport().SetInputAsHandled();
+			return;
 		}
+
+		// 三选一 / 通关 / 死亡面板开着时，Esc 交给它们自己处理，
+		// 否则会"把游戏解除暂停"或者叠出第二个暂停层。
+		if (IsBlockedByOverlay())
+		{
+			return;
+		}
+
+		SetPaused(!GetTree().Paused);
+		GetViewport().SetInputAsHandled();
+	}
+
+	/// <summary>当前有没有正在占用暂停状态的界面（强化 / 通关 / 死亡）。</summary>
+	private bool IsBlockedByOverlay()
+	{
+		if (GetTree().GetFirstNodeInGroup(UpgradePanel.GroupName) is UpgradePanel upgrade && upgrade.IsOpen)
+		{
+			return true;
+		}
+
+		if (GetTree().GetFirstNodeInGroup(ClearPanel.GroupName) is ClearPanel clear && clear.IsOpen)
+		{
+			return true;
+		}
+
+		if (GetNodeOrNull<Control>("DeathPanel") is Control death && death.Visible)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	private void OnPausePressed()
 	{
+		if (IsBlockedByOverlay())
+		{
+			return;
+		}
+
 		SetPaused(true);
 	}
 

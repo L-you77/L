@@ -16,6 +16,9 @@ public partial class TutorialUi : CanvasLayer
 	/// <summary>暂停面板里"退出"回到哪个场景（默认回教学选关）。</summary>
 	[Export] public string ExitScenePath = ScenePaths.TutorialSelect;
 
+	/// <summary>"占用暂停状态"的界面共用的分组（强化 / 通关 / 跑酷结算面板）。</summary>
+	public const string PauseBlockerGroup = "pause_blocker";
+
 	/// <summary>Esc 也能开关暂停。</summary>
 	[Export] public bool PauseWithEscape = true;
 
@@ -31,21 +34,31 @@ public partial class TutorialUi : CanvasLayer
 	/// </summary>
 	[Export] public bool ShowAllButtonsOnStart = false;
 
+	/// <summary>
+	/// 这一层 UI 的绘制层级（默认 5，在关卡画面之上、强化界面 10 之下）。
+	/// 跑酷模式自带一层 HUD（layer 8），想要暂停面板压住它就把这里调成 9。
+	/// </summary>
+	[Export] public int UiLayer = 5;
+
 	private Control _pausePanel;
 	private Control _touchLayer;
 	private TextureButton _pauseButton;
 	private Label _hint;
+	private Label _upgradeLabel;
+	private Player _player;
 	private bool _paused;
 
 	public override void _Ready()
 	{
 		ProcessMode = ProcessModeEnum.Always;
-		Layer = 5;
+		Layer = UiLayer;
 
 		_pausePanel = GetNodeOrNull<Control>("Root/PausePanel");
 		_touchLayer = GetNodeOrNull<Control>("Root/TouchLayer");
 		_pauseButton = GetNodeOrNull<TextureButton>("Root/PauseButton");
 		_hint = GetNodeOrNull<Label>("Root/Hint");
+		_upgradeLabel = GetNodeOrNull<Label>("Root/UpgradeLabel");
+		BindPlayer();
 
 		Bind("Root/PauseButton", () => SetPaused(true));
 		Bind("Root/PausePanel/ResumeButton", () => SetPaused(false));
@@ -70,6 +83,39 @@ public partial class TutorialUi : CanvasLayer
 		}
 
 		SetPaused(false);
+	}
+
+	/// <summary>订阅玩家的"可强化次数"，右上角显示还剩几次可以点自己升级。</summary>
+	private void BindPlayer()
+	{
+		_player = GetTree().GetFirstNodeInGroup(Player.GroupName) as Player;
+
+		if (_player == null)
+		{
+			return;
+		}
+
+		_player.UpgradeChargeChanged += OnUpgradeChargeChanged;
+		OnUpgradeChargeChanged(_player.UpgradeCharges);
+	}
+
+	public override void _ExitTree()
+	{
+		if (_player != null && IsInstanceValid(_player))
+		{
+			_player.UpgradeChargeChanged -= OnUpgradeChargeChanged;
+		}
+	}
+
+	private void OnUpgradeChargeChanged(int charges)
+	{
+		if (_upgradeLabel == null)
+		{
+			return;
+		}
+
+		_upgradeLabel.Text = charges > 0 ? $"可强化 ×{charges}" : string.Empty;
+		_upgradeLabel.Visible = charges > 0;
 	}
 
 	/// <summary>把所有触摸按钮设为可见（不改它们的绑定，只是显隐）。</summary>
@@ -147,8 +193,28 @@ public partial class TutorialUi : CanvasLayer
 			return;
 		}
 
+		// 跑酷的结算面板等：它们也占着暂停状态
+		if (IsBlockedByOverlay())
+		{
+			return;
+		}
+
 		SetPaused(!_paused);
 		GetViewport().SetInputAsHandled();
+	}
+
+	/// <summary>当前有没有别的界面占着暂停状态（跑酷结算面板等）。</summary>
+	private bool IsBlockedByOverlay()
+	{
+		foreach (Node node in GetTree().GetNodesInGroup(PauseBlockerGroup))
+		{
+			if (node is CanvasItem item && item.Visible)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void Bind(string path, System.Action action)

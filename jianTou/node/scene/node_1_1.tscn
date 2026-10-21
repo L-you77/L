@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://c71psx5u2cwad" path="res://node/organ/tong_guan.tscn" id="4_quii3"]
 [ext_resource type="Script" uid="uid://dou0mcday4l7r" path="res://cs/enemy/CoinW.cs" id="5_coinw"]
 [ext_resource type="Script" uid="uid://baiv7xesk8hau" path="res://cs/core/HurtBox.cs" id="6_hurt"]
+[ext_resource type="PackedScene" uid="uid://c2dsiytkrtgxm" path="res://node/ui/ui.tscn" id="7_uitot"]
+[ext_resource type="PackedScene" path="res://node/ui/tutorial_ui.tscn" id="8_tuitot"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1gn4q"]
 texture = ExtResource("1_428yw")
@@ -53,3 +55,12 @@ shape = SubResource("RectangleShape2D_coinw")
 [node name="tongGuan" parent="." unique_id=527467700 instance=ExtResource("4_quii3")]
 position = Vector2(353, 257)
 BackScenePath = "res://node/scene/home_zhuxian.tscn"
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="ui" parent="UI" instance=ExtResource("7_uitot")]
+
+[node name="TutorialUi" parent="." instance=ExtResource("8_tuitot")]
+ExitScenePath = "res://node/scene/home_zhuxian.tscn"
+EnablePauseButton = false
+ShowAllButtonsOnStart = true

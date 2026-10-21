@@ -9,6 +9,12 @@ using Godot;
 /// </summary>
 public partial class Player2 : Player
 {
+	/// <summary>
+	/// 玩家被点到、但当前场景没有 <see cref="TutorialLevel"/> 时发出。
+	/// 给"自己管理强化界面"的模式用（比如无限跑酷：捡到 coinSpe 后点自己才弹三选一）。
+	/// </summary>
+	[Signal] public delegate void UpgradeRequestedEventHandler();
+
 	/// <summary>点击判定半径（世界单位）。角色本体只有 6px，给到 8 就是"点到自己附近就算"。</summary>
 	[Export] public float ClickRadius = 8f;
 
@@ -55,10 +61,8 @@ public partial class Player2 : Player
 
 		if (level == null)
 		{
-			if (LogClick)
-			{
-				GD.PushWarning("[Player2] 当前场景没有 TutorialLevel，不会弹强化界面");
-			}
+			// 没有关卡管理器：交给场景自己处理（例如无限跑酷）
+			EmitSignal(SignalName.UpgradeRequested);
 			return;
 		}
 

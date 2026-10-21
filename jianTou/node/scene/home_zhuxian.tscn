@@ -96,7 +96,6 @@ text = "第一关"
 horizontal_alignment = 1
 
 [node name="Slot2" type="VBoxContainer" parent="LevelList" unique_id=1960375356]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 6
 
@@ -116,7 +115,6 @@ text = "第二关"
 horizontal_alignment = 1
 
 [node name="Slot3" type="VBoxContainer" parent="LevelList" unique_id=418780690]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 6
 

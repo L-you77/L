@@ -8,8 +8,8 @@ using Godot;
 /// </summary>
 public partial class FarHitBullet : Node2D
 {
-	/// <summary>飞行速度（像素/秒）。</summary>
-	[Export] public float Speed = 60f;
+	/// <summary>飞行速度（像素/秒）。实际值由 <see cref="Player.TryFarHit"/> 按角色速度算好后赋值。</summary>
+	[Export] public float Speed = 135f;
 
 	/// <summary>伤害。</summary>
 	[Export] public int Damage = 1;

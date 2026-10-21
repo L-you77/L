@@ -42,6 +42,16 @@ public partial class DeathPanel : Control
 	private void OnPlayerDied()
 	{
 		Visible = true;
+
+		// 死亡时把整个关卡定住：不然面板已经弹出来了，敌人和移动平台还在动，
+		// 画面会在"死亡面板"背后继续演，看起来像没死。
+		GetTree().Paused = true;
+
+		// 死亡期间暂停键没意义（而且会压在死亡面板上）
+		if (GetParent()?.GetNodeOrNull<TextureButton>("PauseButton") is TextureButton pauseButton)
+		{
+			pauseButton.Visible = false;
+		}
 	}
 
 	private void OnRestartPressed()

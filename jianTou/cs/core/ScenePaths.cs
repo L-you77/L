@@ -26,6 +26,9 @@ public static class ScenePaths
 	/// <summary>主线关卡。</summary>
 	public const string Game = "res://node/scene/node_1.tscn";
 
+	/// <summary>无限跑酷（home_2 的"无限"按钮）。</summary>
+	public const string Infinite = "res://node/scene/node_wuxian.tscn";
+
 	/// <summary>主线第一关的地下区域（在 node_1 里按住"向下"钻下去进入）。</summary>
 	public const string Main1_1 = "res://node/scene/node_1_1.tscn";
 

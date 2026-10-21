@@ -121,6 +121,25 @@ theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="UpgradeLabel" type="Label" parent="Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -290.0
+offset_top = 26.0
+offset_right = -104.0
+offset_bottom = 62.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.87, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
+text = "可强化 ×1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
 [node name="PauseButton" type="TextureButton" parent="Root"]
 layout_mode = 1
 anchors_preset = 1
@@ -154,6 +173,27 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0235294, 0.0196078, 0.0196078, 0.6)
+
+[node name="Title" type="Label" parent="Root/PausePanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -134.0
+offset_right = 240.0
+offset_bottom = -78.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 34
+text = "已暂停"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ExitButton" type="TextureButton" parent="Root/PausePanel"]
 layout_mode = 1

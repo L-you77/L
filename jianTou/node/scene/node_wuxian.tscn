@@ -1,0 +1,167 @@
+[gd_scene format=3 uid="uid://h1x55kbxyy8x"]
+
+[ext_resource type="Texture2D" uid="uid://cc2ko233g04l7" path="res://ps/tileMap/DiMian16.png" id="1_attiv"]
+[ext_resource type="PackedScene" uid="uid://2e250q6slqrg" path="res://node/player/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://cmwppa6f50u1x" path="res://cs/scene/EndlessRunner.cs" id="3_run"]
+[ext_resource type="PackedScene" path="res://node/ui/tutorial_ui.tscn" id="4_tui"]
+[ext_resource type="Script" uid="uid://6aieapv6q14y" path="res://cs/player/Player2.cs" id="5_p2"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bwc0h"]
+texture = ExtResource("1_attiv")
+texture_region_size = Vector2i(8, 8)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+1:1/0 = 0
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+1:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_i7t55"]
+tile_size = Vector2i(8, 8)
+physics_layer_0/collision_layer = 3
+physics_layer_0/collision_mask = 3
+sources/0 = SubResource("TileSetAtlasSource_bwc0h")
+
+[node name="Node_wuxian" type="Node2D" unique_id=1969767050]
+script = ExtResource("3_run")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1315149051]
+tile_set = SubResource("TileSet_i7t55")
+
+[node name="player" parent="." unique_id=339594559 instance=ExtResource("2_player")]
+position = Vector2(16, -3)
+script = ExtResource("5_p2")
+ClickRadius = 8.0
+LogClick = true
+AutoRun = true
+EnableCrouch = true
+EnableDownTeleport = true
+LimitCameraToTileMap = false
+FallDeathY = 40.0
+
+[node name="TutorialUi" parent="." unique_id=1344569570 instance=ExtResource("4_tui")]
+ExitScenePath = "res://node/scene/home_2.tscn"
+UiLayer = 9
+EnablePauseButton = true
+ShowAllButtonsOnStart = true
+
+[node name="RunnerHud" type="CanvasLayer" parent="." unique_id=1061305821]
+layer = 8
+
+[node name="DistanceLabel" type="Label" parent="RunnerHud" unique_id=777180905]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -292.0
+offset_right = 200.0
+offset_bottom = -252.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 28
+text = "距离 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HealthLabel" type="Label" parent="RunnerHud" unique_id=1499751431]
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 264.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 26
+text = "生命 3/3"
+vertical_alignment = 1
+
+[node name="GameOverPanel" type="Control" parent="RunnerHud" unique_id=1865047856]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="RunnerHud/GameOverPanel" unique_id=1908898953]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0235294, 0.0196078, 0.0196078, 0.72)
+
+[node name="Title" type="Label" parent="RunnerHud/GameOverPanel" unique_id=148393462]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -140.0
+offset_right = 300.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 40
+text = "游戏结束"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResultLabel" type="Label" parent="RunnerHud/GameOverPanel" unique_id=79616096]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -66.0
+offset_right = 300.0
+offset_bottom = -26.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.92, 1)
+theme_override_font_sizes/font_size = 26
+text = "距离 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RetryButton" type="Button" parent="RunnerHud/GameOverPanel" unique_id=1218672065]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = 20.0
+offset_right = -10.0
+offset_bottom = 76.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+text = "再来一次"
+
+[node name="BackButton" type="Button" parent="RunnerHud/GameOverPanel" unique_id=598921007]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = 20.0
+offset_right = 170.0
+offset_bottom = 76.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+text = "返回"
