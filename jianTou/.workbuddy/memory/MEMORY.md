@@ -51,8 +51,13 @@
   按钮只绑 `action`（Left/Right/Up/NearHit），逻辑复用 Player。
   初始可见性由 `TutorialLevel` 的 `ShowRightButton/ShowLeftButton/ShowUpButton/ShowNearHitButton` 控制；
   **不要**在 `_Ready` 里无条件隐藏所有教学按钮（会误藏 node_left 里本该可见的 TBtnR）。
-- 三选一 UI 是运行时实例化的 `node/ui/upgrade_panel.tscn`（CanvasLayer layer=10，弹出暂停、必选一项）；
+- 三选一 UI 是运行时实例化的 `node/ui/upgrade_panel.tscn`（CanvasLayer layer=10，弹出暂停）。
+  **不强制选一项**：Esc 关掉算放弃；扣次数/扣币都在"真正选中"那一刻（商城例外，见下）。
   教学暂停面板在同一 CanvasLayer 里（layer=5），Esc 遇到强化界面开着时会跳过。
+- **三选一刷新要花 coin**：`RefreshBaseCost`(4) + `RefreshCostStep`(2) × 已刷次数 → 4/6/8/10…
+  每次弹窗从第一次重新算；`Open()` 第 6 个参数 `payRefresh` 决定扣谁的钱（关卡扣 `Player.Coins`，
+  商城扣 `GameState.Coins`）。钱不够不重抽，底部红字提示。刷新成功不弹文字（按钮上写着价格）。
+  商城的 8 coin 是**打开面板时先扣、取消时退回**，免得刷新把钱花掉导致选卡时扣不动。
 
 ## 敌人类型（都继承 EnemyBase，能踩死）
 - `Enemy`（enemy.tscn）：地面巡逻，射线探墙/探边缘掉头。
@@ -89,6 +94,11 @@
   暂停时靠 `TutorialUi._Process` 检测 `GetTree().Paused` 把触摸层藏起来（两个暂停源不会打架）。
 
 ## 道具约定
-- 金币计数存在 `Player.Coins`（内存，重开关卡归零），`AddCoin()` + `CoinChanged` 信号。
+- 金币计数存在 `Player.Coins`（内存，重开关卡归零），`AddCoin()` / `TrySpendCoins()` + `CoinChanged` 信号。
+- **带出规则**：关卡靠 `TongGuan` 通关时 `GameState.BankCoins(player.Coins)`；**只有无限跑酷是例外**——
+  `EndlessRunner.BankRunCoins()` 在死亡时和 `_ExitTree`（中途退出/重开）都会结算，`_bankedCoins` 保证只算一次。
+- **教学全通奖励**：`GameState.RecordTutorialClear(levelPath)`，关卡路径用 `GetTree().CurrentScene.SceneFilePath`
+  （**不要用 TongGuan 自己的 `SceneFilePath`**，那是 `tong_guan.tscn`）。集齐 `ScenePaths.AllTutorialLevels`
+  六关 → 一次性 `AddCoins(20)`，存档 `[tutorial] clears / reward_claimed`。
 - `Coin` 用 `BodyEntered` 检测玩家**本体**（layer 0 / mask 4=PlayerBody / monitorable=false），
   不参与任何伤害层，无敌帧期间照样能捡。收集后 player.AddCoin → 发 Collected 信号 → 放大淡出 → QueueFree。

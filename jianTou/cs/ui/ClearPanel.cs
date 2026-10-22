@@ -19,6 +19,7 @@ public partial class ClearPanel : CanvasLayer
 	private Label _title;
 	private Label _subtitle;
 	private Label _coinLabel;
+	private Label _bonusLabel;
 	private TextureButton _nextButton;
 	private TextureButton _backButton;
 	private Label _nextLabel;
@@ -40,6 +41,7 @@ public partial class ClearPanel : CanvasLayer
 		_title = GetNodeOrNull<Label>("Root/Title");
 		_subtitle = GetNodeOrNull<Label>("Root/Subtitle");
 		_coinLabel = GetNodeOrNull<Label>("Root/CoinLabel");
+		_bonusLabel = GetNodeOrNull<Label>("Root/BonusLabel");
 		_nextButton = GetNodeOrNull<TextureButton>("Root/NextButton");
 		_nextLabel = GetNodeOrNull<Label>("Root/NextLabel");
 		_backButton = GetNodeOrNull<TextureButton>("Root/BackButton");
@@ -61,7 +63,8 @@ public partial class ClearPanel : CanvasLayer
 	/// 显示通关界面并暂停。
 	/// <paramref name="coins"/> = 本关带出的金币数；传负数（默认）就不显示这一行。
 	/// </summary>
-	public void ShowClear(string title, string subtitle, string nextPath, string backPath, int coins = -1)
+	/// <param name="bonus">额外奖励（教学全部通关），传 0 就不显示这一行。</param>
+	public void ShowClear(string title, string subtitle, string nextPath, string backPath, int coins = -1, int bonus = 0)
 	{
 		_nextPath = nextPath ?? string.Empty;
 		_backPath = backPath ?? string.Empty;
@@ -83,6 +86,12 @@ public partial class ClearPanel : CanvasLayer
 			_coinLabel.Text = coins > 0
 				? $"本关金币 +{coins} · 已存入"
 				: "本关没有带出金币";
+		}
+
+		if (_bonusLabel != null)
+		{
+			_bonusLabel.Visible = bonus > 0;
+			_bonusLabel.Text = $"教学全部通关 +{bonus} coin";
 		}
 
 		bool hasNext = !string.IsNullOrEmpty(_nextPath);

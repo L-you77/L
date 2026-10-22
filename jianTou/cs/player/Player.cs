@@ -733,6 +733,20 @@ public partial class Player : CharacterBody2D, IDamageable
 		GD.Print($"[Player] 金币 +{amount}，当前 {Coins}");
 	}
 
+	/// <summary>花掉关卡里捡到的币（三选一刷新用）。余额不够返回 false，不扣。</summary>
+	public bool TrySpendCoins(int cost)
+	{
+		if (cost <= 0 || Coins < cost)
+		{
+			return false;
+		}
+
+		Coins -= cost;
+		EmitSignal(SignalName.CoinChanged, Coins);
+		GD.Print($"[Player] 金币 -{cost}，剩余 {Coins}");
+		return true;
+	}
+
 	/// <summary>捡到 coinSpe：增加一次强化机会。</summary>
 	public void AddUpgradeCharge(int amount = 1)
 	{

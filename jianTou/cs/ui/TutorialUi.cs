@@ -95,7 +95,29 @@ public partial class TutorialUi : CanvasLayer
 
 		ShowTitle(TitleText);
 
+		// 玩家在设置里调过按钮位置/大小的话，在这里套上去（延时一帧，确保布局已经解析）
+		CallDeferred(nameof(ApplyTouchLayout));
+		GetViewport().SizeChanged += OnViewportSizeChanged;
+
 		SetPaused(false);
+	}
+
+	/// <summary>把玩家自定义的触摸按钮布局应用到本关的按钮上。</summary>
+	public void ApplyTouchLayout()
+	{
+		// 测默认布局用的临时探针不套自定义布局，否则量出来的是"改过的"
+		if (HasMeta(TouchLayout.ProbeMeta))
+		{
+			return;
+		}
+
+		TouchLayout.Instance?.ApplyTo(this);
+	}
+
+	/// <summary>窗口/分辨率变了（按钮位置是按比例存的）→ 重新套一次。</summary>
+	private void OnViewportSizeChanged()
+	{
+		ApplyTouchLayout();
 	}
 
 	/// <summary>关卡名：淡入显示一会儿再淡出，不挡操作。</summary>
@@ -135,6 +157,12 @@ public partial class TutorialUi : CanvasLayer
 		if (_player != null && IsInstanceValid(_player))
 		{
 			_player.UpgradeChargeChanged -= OnUpgradeChargeChanged;
+		}
+
+		Viewport viewport = GetViewport();
+		if (viewport != null && IsInstanceValid(viewport))
+		{
+			viewport.SizeChanged -= OnViewportSizeChanged;
 		}
 	}
 

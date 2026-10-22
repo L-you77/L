@@ -83,10 +83,16 @@ public partial class TongGuan : Area2D
 			GameState.Instance?.UnlockFastClearAchievement();
 		}
 
+		// 教学关：记一关通关，集齐 6 关会一次性发 20 coin（由 GameState 判断）。
+		// 注意不能用 SceneFilePath —— 那是本节点的来源场景（tong_guan.tscn），要取当前关卡的路径。
+		string levelPath = GetTree().CurrentScene?.SceneFilePath ?? string.Empty;
+		bool tutorialBonus = levelPath.Contains("/jiaoXue/")
+			&& (GameState.Instance?.RecordTutorialClear(levelPath) ?? false);
+
 		EmitSignal(SignalName.Cleared);
 		GD.Print($"[TongGuan] 通关（下一关：{(string.IsNullOrEmpty(NextScenePath) ? "无" : NextScenePath)}）");
 
-		ShowClearPanel(player.Coins);
+		ShowClearPanel(player.Coins, tutorialBonus ? GameState.TutorialFullClearReward : 0);
 
 		if (HideAfterClear)
 		{
@@ -106,7 +112,7 @@ public partial class TongGuan : Area2D
 	}
 
 	/// <summary>弹出通关界面并暂停游戏。</summary>
-	private void ShowClearPanel(int coins)
+	private void ShowClearPanel(int coins, int bonus = 0)
 	{
 		PackedScene scene = ResourceLoader.Load<PackedScene>(ClearPanelScenePath);
 		if (scene == null)
@@ -130,6 +136,6 @@ public partial class TongGuan : Area2D
 		}
 
 		parent.AddChild(panel);
-		panel.ShowClear(ClearTitle, ClearSubtitle, NextScenePath, BackScenePath, coins);
+		panel.ShowClear(ClearTitle, ClearSubtitle, NextScenePath, BackScenePath, coins, bonus);
 	}
 }

@@ -106,6 +106,7 @@ public partial class EndlessRunner : Node2D
 	private int _nextChunkX;
 	private int _chunkIndex;
 	private int _coins;
+	private bool _bankedCoins;
 	private float _startX;
 	private bool _dead;
 
@@ -496,7 +497,31 @@ public partial class EndlessRunner : Node2D
 			{
 				// 关掉不选：把次数退回去，下次点自己还能再开
 				_player?.AddUpgradeCharge(1);
-			});
+			},
+			cost => _player != null && _player.TrySpendCoins(cost));
+	}
+
+	/// <summary>把这一局捡到的币结算进总账（只结算一次，死了/中途退出都算）。</summary>
+	private void BankRunCoins()
+	{
+		if (_bankedCoins)
+		{
+			return;
+		}
+
+		_bankedCoins = true;
+
+		if (_coins > 0)
+		{
+			GameState.Instance?.BankCoins(_coins);
+			GD.Print($"[EndlessRunner] 带出 {_coins} coin（距离 {Distance}）");
+		}
+	}
+
+	public override void _ExitTree()
+	{
+		// 没死就退出（暂停 → 退出 / 直接切场景）也要带出去
+		BankRunCoins();
 	}
 
 	private void EnsureUpgradePanel()
@@ -526,9 +551,14 @@ public partial class EndlessRunner : Node2D
 
 		_dead = true;
 
+		// 跑酷的币不看通关：死了也照常带出去
+		BankRunCoins();
+
 		if (_gameOverLabel != null)
 		{
-			_gameOverLabel.Text = $"距离 {Distance}";
+			_gameOverLabel.Text = _coins > 0
+				? $"距离 {Distance}　金币 +{_coins}（已存入）"
+				: $"距离 {Distance}";
 		}
 
 		if (_gameOverPanel != null)

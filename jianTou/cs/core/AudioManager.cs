@@ -16,11 +16,14 @@ public partial class AudioManager : Node
 	public static AudioManager Instance { get; private set; }
 
 	[ExportGroup("音量")]
-	/// <summary>BGM 音量（dB）。0 = 原始音量，越小越轻。</summary>
-	[Export] public float MusicVolumeDb = -8f;
+	/// <summary>BGM 音量（0~1，1 = 原始音量）。内部换算成 dB 交给总线。</summary>
+	[Export] public float MusicVolume = 0.4f;
 
-	/// <summary>音效音量（dB）。</summary>
-	[Export] public float SfxVolumeDb = -3f;
+	/// <summary>音效音量（0~1）。</summary>
+	[Export] public float SfxVolume = 0.7f;
+
+	/// <summary>是否全屏（会存盘，下次启动沿用）。</summary>
+	[Export] public bool Fullscreen = false;
 
 	[ExportGroup("播放")]
 	/// <summary>同时能响几个音效。</summary>
@@ -34,6 +37,7 @@ public partial class AudioManager : Node
 	private const string BgmLevel = "res://audio/bgm/level.wav";
 	private const string BgmRunner = "res://audio/bgm/runner.wav";
 	private const string HookedMeta = "sfx_hooked";
+	private const string SettingsPath = "user://jiantou_audio.cfg";
 
 	private readonly Dictionary<string, AudioStream> _sfxCache = new();
 	private readonly List<AudioStreamPlayer> _voices = new();
@@ -69,7 +73,9 @@ public partial class AudioManager : Node
 			_voices.Add(voice);
 		}
 
+		LoadSettings();
 		ApplyBusVolumes();
+		ApplyFullscreen();
 		GetTree().NodeAdded += OnNodeAdded;
 	}
 
@@ -147,18 +153,28 @@ public partial class AudioManager : Node
 		_fade.TweenCallback(Callable.From(() => _music.Stop()));
 	}
 
-	/// <summary>设置 BGM 音量（dB），会立即生效。</summary>
-	public void SetMusicVolumeDb(float db)
+	/// <summary>设置 BGM 音量（0~1），立即生效并存盘。</summary>
+	public void SetMusicVolume(float volume)
 	{
-		MusicVolumeDb = db;
+		MusicVolume = Mathf.Clamp(volume, 0f, 1f);
 		ApplyBusVolumes();
+		SaveSettings();
 	}
 
-	/// <summary>设置音效音量（dB）。</summary>
-	public void SetSfxVolumeDb(float db)
+	/// <summary>设置音效音量（0~1），立即生效并存盘。</summary>
+	public void SetSfxVolume(float volume)
 	{
-		SfxVolumeDb = db;
+		SfxVolume = Mathf.Clamp(volume, 0f, 1f);
 		ApplyBusVolumes();
+		SaveSettings();
+	}
+
+	/// <summary>切换全屏。</summary>
+	public void SetFullscreen(bool on)
+	{
+		Fullscreen = on;
+		ApplyFullscreen();
+		SaveSettings();
 	}
 
 	// ------------------------------------------------------------------
@@ -178,14 +194,54 @@ public partial class AudioManager : Node
 		int musicBus = AudioServer.GetBusIndex("Music");
 		if (musicBus >= 0)
 		{
-			AudioServer.SetBusVolumeDb(musicBus, MusicVolumeDb);
+			AudioServer.SetBusVolumeDb(musicBus, VolumeToDb(MusicVolume));
 		}
 
 		int sfxBus = AudioServer.GetBusIndex("SFX");
 		if (sfxBus >= 0)
 		{
-			AudioServer.SetBusVolumeDb(sfxBus, SfxVolumeDb);
+			AudioServer.SetBusVolumeDb(sfxBus, VolumeToDb(SfxVolume));
 		}
+	}
+
+	/// <summary>0~1 线性音量 → dB（0 直接当静音）。</summary>
+	private static float VolumeToDb(float volume)
+	{
+		return volume <= 0.001f ? -80f : Mathf.LinearToDb(volume);
+	}
+
+	private void ApplyFullscreen()
+	{
+		DisplayServer.WindowSetMode(Fullscreen
+			? DisplayServer.WindowMode.Fullscreen
+			: DisplayServer.WindowMode.Windowed);
+	}
+
+	private void SaveSettings()
+	{
+		ConfigFile config = new();
+		config.SetValue("audio", "music", MusicVolume);
+		config.SetValue("audio", "sfx", SfxVolume);
+		config.SetValue("video", "fullscreen", Fullscreen);
+
+		Error error = config.Save(SettingsPath);
+		if (error != Error.Ok)
+		{
+			GD.PushWarning($"[AudioManager] 设置保存失败：{error}");
+		}
+	}
+
+	private void LoadSettings()
+	{
+		ConfigFile config = new();
+		if (config.Load(SettingsPath) != Error.Ok)
+		{
+			return; // 第一次玩没有设置文件
+		}
+
+		MusicVolume = Mathf.Clamp((float)config.GetValue("audio", "music", MusicVolume).AsDouble(), 0f, 1f);
+		SfxVolume = Mathf.Clamp((float)config.GetValue("audio", "sfx", SfxVolume).AsDouble(), 0f, 1f);
+		Fullscreen = config.GetValue("video", "fullscreen", Fullscreen).AsBool();
 	}
 
 	/// <summary>wav 的循环要在运行时打开（导入设置里默认是关的）。</summary>

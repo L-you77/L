@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 /// <summary>
@@ -93,6 +94,12 @@ public partial class HomeShopMenu : Control
 		if (GameState.Instance != null)
 		{
 			GameState.Instance.CoinsChanged -= OnCoinsChanged;
+
+			// 三选一还开着就退场（异常路径）：把锁定的升级费退回去，别白扣
+			if (_panel != null && IsInstanceValid(_panel) && _panel.IsOpen)
+			{
+				GameState.Instance.AddCoins(UpgradeCost);
+			}
 		}
 	}
 
@@ -182,12 +189,28 @@ public partial class HomeShopMenu : Control
 		bool hasNear = GameState.Instance.HasPermanent(UpgradeEffect.UnlockNearHit);
 		bool hasFar = GameState.Instance.HasPermanent(UpgradeEffect.UnlockFarHit);
 
-		// 币在"真正选中一张"的时候才扣 —— 三选一现在可以关掉，别白花钱
+		List<UpgradeOption> cards = UpgradePool.DrawShop(hasNear, hasFar);
+		if (cards == null || cards.Count == 0)
+		{
+			return;
+		}
+
+		// 打开时先把升级费扣下来"锁定"：这样刷新花的钱不会把购买费吃掉；
+		// 按 Esc 放弃会在 onCancel 里原额退回
+		if (!GameState.Instance.TrySpendCoins(UpgradeCost))
+		{
+			return;
+		}
+
 		_panel.Open(
-			UpgradePool.DrawShop(hasNear, hasFar),
+			cards,
 			UpgradeTitle,
 			OnPicked,
-			() => UpgradePool.DrawShop(hasNear, hasFar));
+			() => UpgradePool.DrawShop(hasNear, hasFar),
+			() => GameState.Instance?.AddCoins(UpgradeCost),
+			cost => GameState.Instance != null && GameState.Instance.TrySpendCoins(cost));
+
+		Refresh();
 	}
 
 	private void OnPicked(UpgradeOption option)
@@ -197,11 +220,7 @@ public partial class HomeShopMenu : Control
 			return;
 		}
 
-		if (!GameState.Instance.TrySpendCoins(UpgradeCost))
-		{
-			return;
-		}
-
+		// 升级费在打开时就已经扣过了，这里只需要记账
 		GameState.Instance.AddPermanent(option.Effect);
 		Refresh();
 	}

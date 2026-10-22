@@ -11,6 +11,12 @@ public static class ScenePaths
 	/// <summary>第二层主页：教学 / 主线。</summary>
 	public const string Home2 = "res://node/scene/home_2.tscn";
 
+	/// <summary>设置界面。</summary>
+	public const string Settings = "res://node/scene/home_settings.tscn";
+
+	/// <summary>触摸按钮的自由布局（设置里的「按钮布局」）。</summary>
+	public const string TouchLayoutScene = "res://node/scene/home_touch_layout.tscn";
+
 	/// <summary>成就界面。</summary>
 	public const string Achievement = "res://node/scene/home_achievement.tscn";
 
@@ -58,6 +64,17 @@ public static class ScenePaths
 
 	/// <summary>教学第六关：向下（爬梯子）。</summary>
 	public const string TutorialDown = "res://node/jiaoXue/node_down.tscn";
+
+	/// <summary>全部教学关卡（集齐通关会发一次奖励，见 GameState.RecordTutorialClear）。</summary>
+	public static readonly string[] AllTutorialLevels =
+	{
+		TutorialRight,
+		TutorialLeft,
+		TutorialUp,
+		TutorialNearHit,
+		TutorialFarHit,
+		TutorialDown,
+	};
 
 	/// <summary>
 	/// 关卡里点"退出"该回哪一屏：教学关（node/jiaoXue/）→ 教学选关，

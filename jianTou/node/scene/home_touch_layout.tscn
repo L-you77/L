@@ -1,0 +1,303 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://cs/ui/HomeTouchLayoutMenu.cs" id="1_layout"]
+[ext_resource type="PackedScene" path="res://node/ui/menu_background.tscn" id="2_bg"]
+[ext_resource type="Theme" path="res://ps/ui/card_button_theme.tres" id="3_theme"]
+[ext_resource type="Texture2D" uid="uid://dt0gs2e7hmyny" path="res://ps/ui/tuiChu.png" id="4_exit"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stage"]
+bg_color = Color(0.898039, 0.913725, 0.945098, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.0235294, 0.0196078, 0.0196078, 0.8)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.18)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(1, 1, 1, 0.78)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.0235294, 0.0196078, 0.0196078, 0.18)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+shadow_color = Color(0, 0, 0, 0.12)
+shadow_size = 10
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_track"]
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.0235294, 0.0196078, 0.0196078, 0.3)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.360784, 0.45098, 0.945098, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="HomeTouchLayout" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_layout")
+
+[node name="Background" parent="." instance=ExtResource("2_bg")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = -248.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 38
+text = "按钮布局"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -520.0
+offset_top = -244.0
+offset_right = 520.0
+offset_bottom = -212.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 18
+text = "拖动下面的按钮摆位置 · 点一下选中后用滑条改大小"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Stage" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -548.0
+offset_top = -150.0
+offset_right = 76.0
+offset_bottom = 201.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_stage")
+
+[node name="ScreenHint" type="Label" parent="Stage"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -14.0
+offset_right = 200.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.55, 0.58, 0.66, 1)
+theme_override_font_sizes/font_size = 16
+text = "游戏画面"
+horizontal_alignment = 1
+vertical_alignment = 1
+[node name="Inner" type="Control" parent="Stage"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+
+[node name="Side" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 104.0
+offset_top = -150.0
+offset_right = 420.0
+offset_bottom = 201.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Body" type="VBoxContainer" parent="Side"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 18.0
+offset_right = -20.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="AllTitle" type="Label" parent="Side/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "整体大小"
+vertical_alignment = 1
+
+[node name="AllSlider" type="HSlider" parent="Side/Body"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_vertical = 4
+min_value = 0.5
+max_value = 2.0
+step = 0.05
+value = 1.0
+theme_override_styles/slider = SubResource("StyleBoxFlat_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+
+[node name="AllValue" type="Label" parent="Side/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 17
+text = "100%"
+horizontal_alignment = 2
+
+[node name="Gap" type="Control" parent="Side/Body"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="OneTitle" type="Label" parent="Side/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 20
+text = "选中：无"
+vertical_alignment = 1
+
+[node name="OneSlider" type="HSlider" parent="Side/Body"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_vertical = 4
+min_value = 0.5
+max_value = 2.0
+step = 0.05
+value = 0.9
+theme_override_styles/slider = SubResource("StyleBoxFlat_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+
+[node name="OneValue" type="Label" parent="Side/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 17
+text = "—"
+horizontal_alignment = 2
+
+[node name="ResetButton" type="Button" parent="Side/Body"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 20
+text = "重置为默认"
+
+[node name="Tip" type="Label" parent="Side/Body"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.42, 0.42, 0.46, 1)
+theme_override_font_sizes/font_size = 15
+text = "松手即保存，回到关卡马上生效。位置按屏幕比例记录，换分辨率也不会跑位。"
+autowrap_mode = 2
+vertical_alignment = 0
+
+[node name="ExitButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 40.0
+offset_right = 536.0
+offset_bottom = 136.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("3_theme")
+
+[node name="Icon" type="TextureRect" parent="ExitButton"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 78.0
+offset_bottom = 78.0
+mouse_filter = 2
+texture = ExtResource("4_exit")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ExitLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 142.0
+offset_right = 536.0
+offset_bottom = 168.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.38, 1)
+theme_override_font_sizes/font_size = 18
+text = "返回"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -113,7 +113,9 @@ public partial class TutorialLevel : Node2D
 			cards,
 			UpgradeTitle,
 			option => OnPicked(player, option),
-			() => UpgradePool.Draw(player, Mode));
+			() => UpgradePool.Draw(player, Mode),
+			null,
+			cost => player.TrySpendCoins(cost));
 		return true;
 	}
 

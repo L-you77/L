@@ -166,6 +166,25 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_ach_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
 text = "教学"
 
+[node name="Coin" type="Sprite2D" parent="jiaoXue" unique_id=1653885936]
+position = Vector2(115.52051, 91.4769)
+rotation = -0.036715046
+scale = Vector2(0.37720773, 0.3609535)
+texture = ExtResource("13_mkujn")
+
+[node name="Title" type="Label" parent="jiaoXue" unique_id=1070192348]
+layout_mode = 0
+offset_left = 63.11157
+offset_top = 70.327324
+offset_right = 93.11157
+offset_bottom = 122.327324
+rotation = -0.021143556
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 30
+text = "20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="zhuXian" type="Button" parent="." unique_id=1414387285]
 layout_mode = 1
 anchors_preset = 8
@@ -232,7 +251,7 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
 text = "无限跑酷"
 
 [node name="QiDai" type="Sprite2D" parent="." unique_id=352727806]
-position = Vector2(706, 464)
+position = Vector2(674, 430.00003)
 scale = Vector2(0.18399996, 0.28773594)
 texture = ExtResource("11_wk4h4")
 
@@ -241,10 +260,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -110.0
-offset_top = 22.0
-offset_right = -22.0
-offset_bottom = 110.0
+offset_left = -342.0
+offset_top = 149.0
+offset_right = -254.0
+offset_bottom = 237.0
 grow_horizontal = 0
 focus_mode = 0
 texture_normal = ExtResource("13_mkujn")
@@ -256,10 +275,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -122.0
-offset_top = 114.0
-offset_right = -10.0
-offset_bottom = 142.0
+offset_left = -355.0
+offset_top = 235.0
+offset_right = -243.0
+offset_bottom = 263.0
 grow_horizontal = 0
 theme_override_colors/font_color = Color(0.85, 0.85, 0.87, 1)
 theme_override_font_sizes/font_size = 20
@@ -267,15 +286,36 @@ text = "商城"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="SettingsButton" type="Button" parent="." unique_id=2010000015]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -352.0
+offset_top = 304.0
+offset_right = -240.0
+offset_bottom = 368.0
+grow_horizontal = 0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_pressed_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_colors/font_hover_color = Color(0.0235294, 0.0196078, 0.0196078, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_ach_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ach_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ach_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ach_hover")
+text = "设置"
+
 [node name="AchievementButton" type="Button" parent="." unique_id=2010000013]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -509.0
-offset_top = 283.0
-offset_right = -397.0
-offset_bottom = 347.0
+offset_left = -529.0
+offset_top = 286.0
+offset_right = -417.0
+offset_bottom = 350.0
 grow_horizontal = 0
 focus_mode = 0
 theme_override_colors/font_color = Color(0.0235294, 0.0196078, 0.0196078, 1)

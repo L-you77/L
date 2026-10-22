@@ -9,11 +9,14 @@ using Godot;
 ///   UpgradePanel panel = scene.Instantiate&lt;UpgradePanel&gt;();
 ///   AddChild(panel);
 ///   panel.Open(cards, "选择一项强化", option =&gt; player.ApplyUpgrade(option.Effect),
-///              refresh: () =&gt; UpgradePool.Draw(player, mode));
+///              refresh: () =&gt; UpgradePool.Draw(player, mode),
+///              payRefresh: cost =&gt; player.TrySpendCoins(cost));
 ///
 /// 弹出时会暂停场景树（ProcessMode = Always 保证自己还能响应），选完/取消后自动恢复。
-/// **不再强制必须选一项**：按 Esc（或点右下角的关闭按钮以外的方式）就能关掉，关了算放弃。
-/// 传了 refresh 回调才会显示"刷新"按钮 —— 点一次重新抽三张。
+/// **不再强制必须选一项**：按 Esc 就能关掉，关了算放弃。
+/// 传了 refresh 回调才会显示"刷新"按钮 —— 点一次重新抽三张，**每次刷新都要花 coin**：
+/// 第一次 <see cref="RefreshBaseCost"/>（默认 4），之后每次加 <see cref="RefreshCostStep"/>（4 → 6 → 8 → 10…）。
+/// 价格在每次弹窗时都从第一次重新算。
 /// </summary>
 public partial class UpgradePanel : CanvasLayer
 {
@@ -22,6 +25,13 @@ public partial class UpgradePanel : CanvasLayer
 
 	/// <summary>界面节点所在的分组（暂停界面靠它判断"三选一是不是正开着"）。</summary>
 	public const string GroupName = "upgrade_panel";
+
+	/// <summary>第一次刷新的价格。</summary>
+	[ExportGroup("刷新费用")]
+	[Export] public int RefreshBaseCost = 4;
+
+	/// <summary>每多刷一次，价格加这么多（默认 2 → 4、6、8、10…）。</summary>
+	[Export] public int RefreshCostStep = 2;
 
 	private const int MaxCards = 3;
 
@@ -34,13 +44,22 @@ public partial class UpgradePanel : CanvasLayer
 	private Control _root;
 	private Label _title;
 	private Button _refreshButton;
+	private Label _hint;
 	private Action<UpgradeOption> _onPick;
 	private Func<List<UpgradeOption>> _refresh;
 	private Action _onCancel;
+	private Func<int, bool> _payRefresh;
 	private float _inputGuard;
+
+	private int _refreshCount;
+	private string _hintDefault = string.Empty;
+	private float _hintTimer;
 
 	/// <summary>界面是否正开着。</summary>
 	public bool IsOpen { get; private set; }
+
+	/// <summary>下一次刷新要花多少 coin。</summary>
+	public int CurrentRefreshCost => Mathf.Max(0, RefreshBaseCost) + Mathf.Max(0, RefreshCostStep) * _refreshCount;
 
 	public override void _Ready()
 	{
@@ -52,6 +71,12 @@ public partial class UpgradePanel : CanvasLayer
 		_root = GetNodeOrNull<Control>("Root");
 		_title = GetNodeOrNull<Label>("Root/Title");
 		_refreshButton = GetNodeOrNull<Button>("Root/RefreshButton");
+		_hint = GetNodeOrNull<Label>("Root/Hint");
+
+		if (_hint != null)
+		{
+			_hintDefault = _hint.Text;
+		}
 
 		if (_refreshButton != null)
 		{
@@ -82,6 +107,15 @@ public partial class UpgradePanel : CanvasLayer
 		{
 			_inputGuard -= (float)delta;
 		}
+
+		if (_hintTimer > 0f)
+		{
+			_hintTimer -= (float)delta;
+			if (_hintTimer <= 0f)
+			{
+				ResetHint();
+			}
+		}
 	}
 
 	/// <summary>Esc = 不选，直接关掉（会解除暂停）。</summary>
@@ -101,13 +135,15 @@ public partial class UpgradePanel : CanvasLayer
 	/// 避免"点玩家那一下"顺手把刚弹出来的卡也点掉。
 	/// </summary>
 	/// <param name="refresh">点"刷新"时重新抽卡的回调；传 null 就不显示刷新按钮。</param>
-	/// <param name="onCancel">没选就关掉时调用（比如商城要退钱）。</param>
+	/// <param name="onCancel">没选就关掉时调用（比如商城要把锁定的钱退回去）。</param>
+	/// <param name="payRefresh">刷新付费：参数是这次的价格，返回 false 表示钱不够（不会重抽）。</param>
 	public void Open(
 		IReadOnlyList<UpgradeOption> options,
 		string title,
 		Action<UpgradeOption> onPick,
 		Func<List<UpgradeOption>> refresh = null,
-		Action onCancel = null)
+		Action onCancel = null,
+		Func<int, bool> payRefresh = null)
 	{
 		if (options == null || options.Count == 0)
 		{
@@ -118,6 +154,10 @@ public partial class UpgradePanel : CanvasLayer
 		_onPick = onPick;
 		_refresh = refresh;
 		_onCancel = onCancel;
+		_payRefresh = payRefresh;
+
+		// 每次弹窗都从第一次的价格（4 coin）重新算
+		_refreshCount = 0;
 		IsOpen = true;
 		_inputGuard = 0.12f;
 
@@ -131,6 +171,8 @@ public partial class UpgradePanel : CanvasLayer
 			_refreshButton.Visible = refresh != null;
 		}
 
+		UpdateRefreshLabel();
+		ResetHint();
 		FillCards(options);
 
 		GetTree().Paused = true;
@@ -149,6 +191,10 @@ public partial class UpgradePanel : CanvasLayer
 		_onPick = null;
 		_refresh = null;
 		_onCancel = null;
+		_payRefresh = null;
+		_refreshCount = 0;
+
+		ResetHint();
 		SetOpen(false);
 		GetTree().Paused = false;
 	}
@@ -204,11 +250,19 @@ public partial class UpgradePanel : CanvasLayer
 		}
 	}
 
-	/// <summary>刷新：让调用方重新抽一批，再填回卡片。</summary>
+	/// <summary>刷新：先扣 coin，再让调用方重新抽一批填回卡片。钱不够就不重抽。</summary>
 	private void OnRefreshPressed()
 	{
 		if (!IsOpen || _inputGuard > 0f || _refresh == null)
 		{
+			return;
+		}
+
+		int cost = CurrentRefreshCost;
+
+		if (cost > 0 && _payRefresh != null && !_payRefresh(cost))
+		{
+			FlashHint($"coin 不足，这次刷新需要 {cost}", true);
 			return;
 		}
 
@@ -218,8 +272,24 @@ public partial class UpgradePanel : CanvasLayer
 			return;
 		}
 
+		_refreshCount++;
 		FillCards(cards);
-		GD.Print("[UpgradePanel] 刷新了选项");
+		UpdateRefreshLabel();
+
+		// 刷新成功不弹文字：按钮上的"刷新（6）"和 HUD 的币数已经够说明问题了
+		GD.Print($"[UpgradePanel] 刷新了选项（花费 {cost}，下次 {CurrentRefreshCost}）");
+	}
+
+	/// <summary>刷新按钮上的文字：把这次的价格写在上面。</summary>
+	private void UpdateRefreshLabel()
+	{
+		if (_refreshButton == null)
+		{
+			return;
+		}
+
+		int cost = CurrentRefreshCost;
+		_refreshButton.Text = cost > 0 ? $"刷新（{cost}）" : "刷新";
 	}
 
 	private void OnCardPressed(int index)
@@ -236,6 +306,34 @@ public partial class UpgradePanel : CanvasLayer
 
 		EmitSignal(SignalName.Chosen, (int)picked.Effect);
 		callback?.Invoke(picked);
+	}
+
+	/// <summary>临时改一句底部提示（比如"coin 不足"），过一会儿自动恢复。</summary>
+	private void FlashHint(string text, bool warn = false)
+	{
+		if (_hint == null)
+		{
+			return;
+		}
+
+		_hint.Text = text;
+		_hint.Modulate = warn ? new Color(1f, 0.38f, 0.34f) : new Color(1f, 0.9f, 0.5f);
+		_hint.Visible = true;
+		_hintTimer = 1.6f;
+	}
+
+	/// <summary>恢复成"不显示"—— 平时底部没有常驻提示文字。</summary>
+	private void ResetHint()
+	{
+		if (_hint == null)
+		{
+			return;
+		}
+
+		_hint.Text = _hintDefault;
+		_hint.Modulate = Colors.White;
+		_hint.Visible = !string.IsNullOrEmpty(_hintDefault);
+		_hintTimer = 0f;
 	}
 
 	private void SetOpen(bool open)

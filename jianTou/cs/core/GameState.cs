@@ -34,12 +34,19 @@ public partial class GameState : Node
 	private const string KeyEyeUnlocked = "eye_unlocked";
 	private const string KeyClearCount = "clears";
 	private const string KeyTotalCoins = "total_coins";
+	private const string SectionTutorial = "tutorial";
+	private const string KeyTutorialClears = "clears";
+	private const string KeyTutorialReward = "reward_claimed";
 	private const string SectionAchievements = "achievements";
 	private const string KeyClearAll = "clear_all";
 	private const string KeyFastClear = "fast_clear";
 	private const string KeyRunner1000 = "runner_1000";
 
+	/// <summary>教学关卡全部通关的奖励币数（只发一次）。</summary>
+	public const int TutorialFullClearReward = 20;
+
 	private readonly Dictionary<UpgradeEffect, int> _permanent = new();
+	private readonly HashSet<string> _tutorialClears = new();
 
 	/// <summary>已带出的 coin 总数。</summary>
 	public int Coins { get; private set; }
@@ -52,6 +59,12 @@ public partial class GameState : Node
 
 	/// <summary>累计带出的金币（成就用，只增不减，卖东西返还的不算）。</summary>
 	public int TotalCoinsEarned { get; private set; }
+
+	/// <summary>已经通关过的教学关卡（存场景路径）。</summary>
+	public int TutorialClearCount => _tutorialClears.Count;
+
+	/// <summary>教学全通奖励是否已经领过。</summary>
+	public bool TutorialRewardClaimed { get; private set; }
 
 	/// <summary>成就：把一张地图上的敌人全部清掉。</summary>
 	public bool AchievementClearAll { get; private set; }
@@ -146,6 +159,45 @@ public partial class GameState : Node
 		Save();
 		EmitSignal(SignalName.ProgressChanged);
 		GD.Print("[GameState] 解锁成就：酷跑玩家");
+	}
+
+	/// <summary>
+	/// 记录一次教学关通关。<b>返回 true 表示这次刚好集齐全部教学关、发了全通奖励</b>。
+	/// 只认 <see cref="ScenePaths.AllTutorialLevels"/> 里的关卡，重复通关不会重复计数。
+	/// </summary>
+	public bool RecordTutorialClear(string scenePath)
+	{
+		if (string.IsNullOrEmpty(scenePath))
+		{
+			return false;
+		}
+
+		bool isNew = _tutorialClears.Add(scenePath);
+
+		if (isNew)
+		{
+			Save();
+			EmitSignal(SignalName.ProgressChanged);
+			GD.Print($"[GameState] 教学关通关 {_tutorialClears.Count}/{ScenePaths.AllTutorialLevels.Length}：{scenePath}");
+		}
+
+		if (TutorialRewardClaimed)
+		{
+			return false;
+		}
+
+		foreach (string level in ScenePaths.AllTutorialLevels)
+		{
+			if (!_tutorialClears.Contains(level))
+			{
+				return false;
+			}
+		}
+
+		TutorialRewardClaimed = true;
+		AddCoins(TutorialFullClearReward);
+		GD.Print($"[GameState] 教学关卡全部通关，奖励 {TutorialFullClearReward} coin");
+		return true;
 	}
 
 	/// <summary>通关一次（成就统计用，由 TongGuan 调用）。</summary>
@@ -340,6 +392,8 @@ public partial class GameState : Node
 		config.SetValue(SectionPlayer, KeyEyeUnlocked, EyeUnlocked);
 		config.SetValue(SectionPlayer, KeyClearCount, ClearCount);
 		config.SetValue(SectionPlayer, KeyTotalCoins, TotalCoinsEarned);
+		config.SetValue(SectionTutorial, KeyTutorialClears, new List<string>(_tutorialClears).ToArray());
+		config.SetValue(SectionTutorial, KeyTutorialReward, TutorialRewardClaimed);
 		config.SetValue(SectionAchievements, KeyClearAll, AchievementClearAll);
 		config.SetValue(SectionAchievements, KeyFastClear, AchievementFastClear);
 		config.SetValue(SectionAchievements, KeyRunner1000, AchievementRunner1000);
@@ -368,6 +422,16 @@ public partial class GameState : Node
 		EyeUnlocked = config.GetValue(SectionPlayer, KeyEyeUnlocked, false).AsBool();
 		ClearCount = config.GetValue(SectionPlayer, KeyClearCount, 0).AsInt32();
 		TotalCoinsEarned = config.GetValue(SectionPlayer, KeyTotalCoins, 0).AsInt32();
+		string[] saved = config.GetValue(SectionTutorial, KeyTutorialClears, System.Array.Empty<string>()).AsStringArray();
+		foreach (string level in saved)
+		{
+			if (!string.IsNullOrEmpty(level))
+			{
+				_tutorialClears.Add(level);
+			}
+		}
+		TutorialRewardClaimed = config.GetValue(SectionTutorial, KeyTutorialReward, false).AsBool();
+
 		AchievementClearAll = config.GetValue(SectionAchievements, KeyClearAll, false).AsBool();
 		AchievementFastClear = config.GetValue(SectionAchievements, KeyFastClear, false).AsBool();
 		AchievementRunner1000 = config.GetValue(SectionAchievements, KeyRunner1000, false).AsBool();
