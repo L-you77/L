@@ -238,6 +238,12 @@ public partial class Player : CharacterBody2D, IDamageable
 	[Signal] public delegate void UpgradeChargeChangedEventHandler(int charges);
 	[Signal] public delegate void DiedEventHandler();
 
+	/// <summary>起跳（含空中跳、梯子上跳离）——音效用。</summary>
+	[Signal] public delegate void JumpedEventHandler();
+
+	/// <summary>落地（从空中踩到地面那一帧）——音效用。</summary>
+	[Signal] public delegate void LandedEventHandler();
+
 	private static readonly StringName AnimIdle = "idle";
 	private static readonly StringName AnimUp = "up";
 	private static readonly StringName AnimDown = "down";
@@ -258,6 +264,7 @@ public partial class Player : CharacterBody2D, IDamageable
 	private Vector2 _spriteBaseScale = Vector2.One;
 	private bool _crouching;
 	private float _downTeleportCd;
+	private bool _wasOnFloor;
 	private HurtBox _hurtBox;
 	private HitBox _stompBox;
 
@@ -607,6 +614,7 @@ public partial class Player : CharacterBody2D, IDamageable
 				_jumpBufferTimer = 0f;
 				onLadder = false;
 
+				EmitSignal(SignalName.Jumped);
 				GD.Print("[Player] 梯子上起跳");
 			}
 		}
@@ -623,6 +631,7 @@ public partial class Player : CharacterBody2D, IDamageable
 			_jumpNotCut = true;
 			_jumpBufferTimer = 0f;
 			_coyoteTimer = 0f;
+			EmitSignal(SignalName.Jumped);
 		}
 		else if (!onLadder && _jumpBufferTimer > 0f && AirJumpsLeft > 0)
 		{
@@ -631,6 +640,7 @@ public partial class Player : CharacterBody2D, IDamageable
 			velocity.Y = -JumpForce * JumpMultiplier;
 			_jumpNotCut = true;
 			_jumpBufferTimer = 0f;
+			EmitSignal(SignalName.Jumped);
 		}
 
 		// --- 松键小跳 ---
@@ -649,6 +659,14 @@ public partial class Player : CharacterBody2D, IDamageable
 
 		Velocity = velocity;
 		MoveAndSlide();
+
+		// --- 落地：上一帧在空中、这一帧踩到地面 ---
+		bool grounded = IsOnFloor();
+		if (grounded && !_wasOnFloor && IsAlive)
+		{
+			EmitSignal(SignalName.Landed);
+		}
+		_wasOnFloor = grounded;
 
 		UpdateAnimation(Velocity);
 

@@ -17,6 +17,7 @@ config/features=PackedStringArray("4.6", "C#", "Mobile")
 [autoload]
 
 GameState="*res://node/core/game_state.tscn"
+AudioManager="*res://node/core/audio_manager.tscn"
 
 [display]
 

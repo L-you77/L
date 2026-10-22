@@ -77,21 +77,32 @@ public partial class CoinW : Sprite2D, IDamageable
 
 		Popup(HitText, new Color(1f, 1f, 1f), -14f);
 
-		if (_rng.Randf() < CoinChance)
+		// 概率判定 + 真的把币加上了才算"掉币"（场上找不到玩家时不算）
+		bool gaveCoin = _rng.Randf() < CoinChance && GiveCoin();
+
+		if (gaveCoin)
 		{
-			GiveCoin();
+			// 掉币：和吃金币同一个音
+			AudioManager.Instance?.PlaySfx("coin", -4f);
+		}
+		else
+		{
+			// 没掉币：用打怪的音，让玩家听得出"打中了但没出币"
+			AudioManager.Instance?.PlaySfx("kill", -3f);
 		}
 	}
 
-	private void GiveCoin()
+	/// <summary>给玩家加币并飘字；返回 true 表示确实加上了。</summary>
+	private bool GiveCoin()
 	{
 		if (GetTree().GetFirstNodeInGroup(Player.GroupName) is not Player player)
 		{
-			return;
+			return false;
 		}
 
 		player.AddCoin(CoinAmount);
 		Popup($"{CoinText}", new Color(1f, 0.86f, 0.28f), -22f);
+		return true;
 	}
 
 	/// <summary>
